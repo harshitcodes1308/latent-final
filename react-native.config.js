@@ -1,7 +1,7 @@
 /**
- * React Native configuration for RunAnywhere
+ * React Native configuration for LocalAI
  *
- * NOTE: automaticPodsInstallation is disabled because the @runanywhere packages
+ * NOTE: automaticPodsInstallation is disabled because the @latent packages
  * use "podspecPath" in their react-native.config.js, which is not allowed by
  * the RN 0.83 CLI. Pods must be installed manually: cd ios && pod install && cd ..
  */

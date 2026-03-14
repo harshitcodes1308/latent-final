@@ -2,7 +2,7 @@
 
 ## Overview
 
-This app uses RunAnywhere SDK with Sherpa-ONNX Whisper for speech-to-text transcription.
+This app uses LocalAI SDK with Sherpa-ONNX Whisper for speech-to-text transcription.
 
 ## Automatic Model Download
 
@@ -15,7 +15,7 @@ This app uses RunAnywhere SDK with Sherpa-ONNX Whisper for speech-to-text transc
 
 ## What Happens on First Launch
 
-1. App initializes RunAnywhere SDK
+1. App initializes LocalAI SDK
 2. Registers default models (including STT)
 3. When you start a live session:
    - Checks if STT model is downloaded
@@ -118,7 +118,7 @@ App.tsx: Call registerDefaultModels()
 App.tsx: Call loadSTTModel()
     ├─ Checks if model downloaded
     ├─ Downloads if needed (with progress)
-    └─ Loads model using RunAnywhere.loadSTTModel()
+    └─ Loads model using LocalAI.loadSTTModel()
     ↓
 User starts live session
     ↓
@@ -129,7 +129,7 @@ LiveSessionScreen checks model status
     ↓
 Audio captured
     ↓
-RunAnywhere.transcribe(audioPath)
+LocalAI.transcribe(audioPath)
     ↓
 Transcript returned
 ```
@@ -147,8 +147,8 @@ Transcript returned
 
 ```
 [App] 🚀 Starting initialization...
-[App] 🔧 Initializing RunAnywhere SDK...
-[App] ✅ RunAnywhere SDK initialized
+[App] 🔧 Initializing LocalAI SDK...
+[App] ✅ LocalAI SDK initialized
 [App] 📦 Registering backends...
 [App] ✅ Backends registered
 [App] 🤖 Registering default models...
@@ -223,10 +223,10 @@ const STT_MODEL_ID = 'sherpa-onnx-whisper-base.en';
 If issues persist:
 
 1. Enable Debug Mode to verify the rest of the app works
-2. Check RunAnywhere SDK docs: https://docs.runanywhere.ai
-3. Verify @runanywhere packages in package.json:
-   - @runanywhere/core: ^0.18.1
-   - @runanywhere/llamacpp: ^0.18.1
-   - @runanywhere/onnx: ^0.18.1
+2. Check LocalAI SDK docs: https://docs.latent.ai
+3. Verify @latent packages in package.json:
+   - @latent/core: ^0.18.1
+   - @latent/llamacpp: ^0.18.1
+   - @latent/onnx: ^0.18.1
 4. Check logs for specific error messages
 5. Try uninstalling and reinstalling the app

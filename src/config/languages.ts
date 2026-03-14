@@ -1,6 +1,6 @@
 /**
  * Language configuration for multi-language STT/TTS support
- * Per RunAnywhere docs: https://docs.runanywhere.ai/react-native/stt/options
+ * Per LocalAI docs: https://docs.latent.ai/react-native/stt/options
  */
 
 export interface LanguageConfig {
@@ -27,9 +27,9 @@ export const SUPPORTED_LANGUAGES: LanguageConfig[] = [
     sttModelId: 'sherpa-onnx-whisper-base.en',
     ttsModelId: 'vits-piper-en_US-lessac-medium',
     sttModelUrl:
-      'https://github.com/RunanywhereAI/sherpa-onnx/releases/download/runanywhere-models-v1/sherpa-onnx-whisper-base.en.tar.gz',
+      'https://github.com/RunanywhereAI/sherpa-onnx/releases/download/latent-models-v1/sherpa-onnx-whisper-base.en.tar.gz',
     ttsModelUrl:
-      'https://github.com/RunanywhereAI/sherpa-onnx/releases/download/runanywhere-models-v1/vits-piper-en_US-lessac-medium.tar.gz',
+      'https://github.com/RunanywhereAI/sherpa-onnx/releases/download/latent-models-v1/vits-piper-en_US-lessac-medium.tar.gz',
   },
   {
     code: 'es',
@@ -40,9 +40,9 @@ export const SUPPORTED_LANGUAGES: LanguageConfig[] = [
     ttsModelId: 'vits-piper-es_ES-sharvard-medium',
     // Note: These are example URLs - actual multilingual models would need to be hosted
     sttModelUrl:
-      'https://github.com/RunanywhereAI/sherpa-onnx/releases/download/runanywhere-models-v1/sherpa-onnx-whisper-tiny.tar.gz',
+      'https://github.com/RunanywhereAI/sherpa-onnx/releases/download/latent-models-v1/sherpa-onnx-whisper-tiny.tar.gz',
     ttsModelUrl:
-      'https://github.com/RunanywhereAI/sherpa-onnx/releases/download/runanywhere-models-v1/vits-piper-es_ES-sharvard-medium.tar.gz',
+      'https://github.com/RunanywhereAI/sherpa-onnx/releases/download/latent-models-v1/vits-piper-es_ES-sharvard-medium.tar.gz',
   },
   {
     code: 'fr',
@@ -52,9 +52,9 @@ export const SUPPORTED_LANGUAGES: LanguageConfig[] = [
     sttModelId: 'sherpa-onnx-whisper-tiny-fr',
     ttsModelId: 'vits-piper-fr_FR-upmc-medium',
     sttModelUrl:
-      'https://github.com/RunanywhereAI/sherpa-onnx/releases/download/runanywhere-models-v1/sherpa-onnx-whisper-tiny.tar.gz',
+      'https://github.com/RunanywhereAI/sherpa-onnx/releases/download/latent-models-v1/sherpa-onnx-whisper-tiny.tar.gz',
     ttsModelUrl:
-      'https://github.com/RunanywhereAI/sherpa-onnx/releases/download/runanywhere-models-v1/vits-piper-fr_FR-upmc-medium.tar.gz',
+      'https://github.com/RunanywhereAI/sherpa-onnx/releases/download/latent-models-v1/vits-piper-fr_FR-upmc-medium.tar.gz',
   },
   {
     code: 'de',
@@ -64,9 +64,9 @@ export const SUPPORTED_LANGUAGES: LanguageConfig[] = [
     sttModelId: 'sherpa-onnx-whisper-tiny-de',
     ttsModelId: 'vits-piper-de_DE-thorsten-medium',
     sttModelUrl:
-      'https://github.com/RunanywhereAI/sherpa-onnx/releases/download/runanywhere-models-v1/sherpa-onnx-whisper-tiny.tar.gz',
+      'https://github.com/RunanywhereAI/sherpa-onnx/releases/download/latent-models-v1/sherpa-onnx-whisper-tiny.tar.gz',
     ttsModelUrl:
-      'https://github.com/RunanywhereAI/sherpa-onnx/releases/download/runanywhere-models-v1/vits-piper-de_DE-thorsten-medium.tar.gz',
+      'https://github.com/RunanywhereAI/sherpa-onnx/releases/download/latent-models-v1/vits-piper-de_DE-thorsten-medium.tar.gz',
   },
   {
     code: 'zh',
@@ -76,7 +76,7 @@ export const SUPPORTED_LANGUAGES: LanguageConfig[] = [
     sttModelId: 'sherpa-onnx-whisper-tiny-zh',
     ttsModelId: 'vits-piper-zh_CN-huayan-medium',
     sttModelUrl:
-      'https://github.com/RunanywhereAI/sherpa-onnx/releases/download/runanywhere-models-v1/sherpa-onnx-whisper-tiny.tar.gz',
+      'https://github.com/RunanywhereAI/sherpa-onnx/releases/download/latent-models-v1/sherpa-onnx-whisper-tiny.tar.gz',
   },
   {
     code: 'ja',
@@ -86,7 +86,7 @@ export const SUPPORTED_LANGUAGES: LanguageConfig[] = [
     sttModelId: 'sherpa-onnx-whisper-tiny-ja',
     ttsModelId: 'vits-piper-ja_JP-medium',
     sttModelUrl:
-      'https://github.com/RunanywhereAI/sherpa-onnx/releases/download/runanywhere-models-v1/sherpa-onnx-whisper-tiny.tar.gz',
+      'https://github.com/RunanywhereAI/sherpa-onnx/releases/download/latent-models-v1/sherpa-onnx-whisper-tiny.tar.gz',
   },
 ];
 

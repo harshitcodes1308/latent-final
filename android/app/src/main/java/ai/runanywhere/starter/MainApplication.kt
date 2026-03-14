@@ -1,4 +1,4 @@
-package ai.runanywhere.starter
+package ai.latent.starter
 
 import android.app.Application
 import com.facebook.react.PackageList
@@ -18,7 +18,7 @@ class MainApplication : Application(), ReactApplication {
       object : DefaultReactNativeHost(this) {
         override fun getPackages(): List<ReactPackage> =
             PackageList(this).packages.apply {
-              // Add our custom NativeAudioModule for STT/TTS audio recording and playback
+              // Add our custom LocalAudioModule for STT/TTS audio recording and playback
               add(NativeAudioPackage())
             }
 

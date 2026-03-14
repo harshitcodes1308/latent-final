@@ -4,8 +4,8 @@ import React
 
 /// Native iOS Audio Module for recording, playback, and TTS
 /// Uses AVFoundation directly - compatible with New Architecture
-@objc(NativeAudioModule)
-class NativeAudioModule: NSObject, AVSpeechSynthesizerDelegate {
+@objc(LocalAudioModule)
+class LocalAudioModule: NSObject, AVSpeechSynthesizerDelegate {
 
   private var audioEngine: AVAudioEngine?
   private var audioPlayer: AVAudioPlayer?
@@ -73,7 +73,7 @@ class NativeAudioModule: NSObject, AVSpeechSynthesizerDelegate {
       audioRecorder?.record()
       isRecording = true
 
-      print("[NativeAudioModule] Recording started: \(recordingURL!.path)")
+      print("[LocalAudioModule] Recording started: \(recordingURL!.path)")
       resolve(["status": "recording", "path": recordingURL!.path])
     } catch {
       reject("RECORDING_ERROR", "Failed to start recording: \(error.localizedDescription)", error)
@@ -97,7 +97,7 @@ class NativeAudioModule: NSObject, AVSpeechSynthesizerDelegate {
         let base64String = audioData.base64EncodedString()
         let fileSize = audioData.count
         
-        print("[NativeAudioModule] Recording stopped: \(url.path), size: \(fileSize) bytes, base64 length: \(base64String.count)")
+        print("[LocalAudioModule] Recording stopped: \(url.path), size: \(fileSize) bytes, base64 length: \(base64String.count)")
         
         // Clean up the file since we're returning the data directly
         try? FileManager.default.removeItem(at: url)
@@ -109,7 +109,7 @@ class NativeAudioModule: NSObject, AVSpeechSynthesizerDelegate {
           "audioBase64": base64String
         ])
       } catch {
-        print("[NativeAudioModule] Error reading audio file: \(error)")
+        print("[LocalAudioModule] Error reading audio file: \(error)")
         reject("READ_ERROR", "Failed to read audio file: \(error.localizedDescription)", error)
       }
     } else {
@@ -165,7 +165,7 @@ class NativeAudioModule: NSObject, AVSpeechSynthesizerDelegate {
       audioPlayer?.prepareToPlay()
       audioPlayer?.play()
 
-      print("[NativeAudioModule] Playing audio: \(filePath)")
+      print("[LocalAudioModule] Playing audio: \(filePath)")
       resolve([
         "status": "playing",
         "duration": audioPlayer?.duration ?? 0
@@ -254,7 +254,7 @@ class NativeAudioModule: NSObject, AVSpeechSynthesizerDelegate {
     ttsReject = reject
     isSpeaking = true
 
-    print("[NativeAudioModule] Speaking: \(text.prefix(50))... rate: \(mappedRate), pitch: \(pitch)")
+    print("[LocalAudioModule] Speaking: \(text.prefix(50))... rate: \(mappedRate), pitch: \(pitch)")
     speechSynthesizer?.speak(utterance)
   }
 
@@ -275,7 +275,7 @@ class NativeAudioModule: NSObject, AVSpeechSynthesizerDelegate {
   // MARK: - AVSpeechSynthesizerDelegate
 
   func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
-    print("[NativeAudioModule] Speech finished")
+    print("[LocalAudioModule] Speech finished")
     isSpeaking = false
     ttsResolve?(["status": "finished"])
     ttsResolve = nil
@@ -283,7 +283,7 @@ class NativeAudioModule: NSObject, AVSpeechSynthesizerDelegate {
   }
 
   func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
-    print("[NativeAudioModule] Speech cancelled")
+    print("[LocalAudioModule] Speech cancelled")
     isSpeaking = false
     ttsResolve?(["status": "cancelled"])
     ttsResolve = nil

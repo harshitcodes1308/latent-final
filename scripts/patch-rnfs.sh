@@ -19,8 +19,8 @@ if [ -f "$DOWNLOADER" ]; then
   echo "✅ Patched Downloader.java (256KB buffer)"
 fi
 
-# Patch RunAnywhere SDK to use foreground downloads (Android OEMs throttle background downloads)
-SDK_FILE="node_modules/@runanywhere/core/src/services/FileSystem.ts"
+# Patch LocalAI SDK to use foreground downloads (Android OEMs throttle background downloads)
+SDK_FILE="node_modules/@latent/core/src/services/FileSystem.ts"
 
 if [ -f "$SDK_FILE" ]; then
   sed -i.bak 's/background: true,/background: false,/' "$SDK_FILE"

@@ -1,6 +1,6 @@
 //
-//  RunAnywhereStarter-Bridging-Header.h
-//  RunAnywhereStarter
+//  LatentStarter-Bridging-Header.h
+//  LatentStarter
 //
 //  Bridging header for Swift to access Objective-C modules
 //

@@ -1,4 +1,4 @@
-package ai.runanywhere.starter
+package ai.latent.starter
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -18,9 +18,9 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.concurrent.thread
 
-class NativeAudioModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
+class LocalAudioModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
 
-    override fun getName(): String = "NativeAudioModule"
+    override fun getName(): String = "LocalAudioModule"
 
     private var audioRecord: AudioRecord? = null
     private var isRecording = false
@@ -33,7 +33,7 @@ class NativeAudioModule(reactContext: ReactApplicationContext) : ReactContextBas
     private var isPlaying = false
 
     companion object {
-        const val TAG = "NativeAudioModule"
+        const val TAG = "LocalAudioModule"
         const val SAMPLE_RATE = 16000
         const val CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO
         const val AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT
@@ -442,7 +442,7 @@ class NativeAudioModule(reactContext: ReactApplicationContext) : ReactContextBas
     @ReactMethod
     fun speak(text: String, promise: Promise) {
         // Simple TTS using Android's built-in TTS (fallback)
-        promise.reject("NOT_IMPLEMENTED", "Use RunAnywhere.synthesize() instead")
+        promise.reject("NOT_IMPLEMENTED", "Use LocalAI.synthesize() instead")
     }
 
     @ReactMethod

@@ -1,6 +1,6 @@
 # Multi-Language STT/TTS Feature
 
-This document describes the multi-language Speech-to-Text (STT) and Text-to-Speech (TTS) feature added to the RunAnywhere React Native Starter App.
+This document describes the multi-language Speech-to-Text (STT) and Text-to-Speech (TTS) feature added to the LocalAI React Native Starter App.
 
 ## Overview
 
@@ -83,7 +83,7 @@ A modal for selecting TTS voices with:
 
 - Language selection button at the top
 - Displays selected language with flag emoji
-- Passes language code to `RunAnywhere.transcribe()` API
+- Passes language code to `LocalAI.transcribe()` API
 - Filters language selector to only show languages with STT support
 
 **Code changes:**
@@ -102,7 +102,7 @@ A modal for selecting TTS voices with:
 </TouchableOpacity>
 
 // Transcribe with selected language
-const result = await RunAnywhere.transcribe(audioBase64, {
+const result = await LocalAI.transcribe(audioBase64, {
   sampleRate: 16000,
   language: selectedLanguage.code,
 });
@@ -131,7 +131,7 @@ const result = await RunAnywhere.transcribe(audioBase64, {
 </View>
 
 // Synthesize with selected voice
-const result = await RunAnywhere.synthesize(text, {
+const result = await LocalAI.synthesize(text, {
   voice: selectedVoice?.id || 'default',
   rate: speechRate,
   pitch: 1.0,
@@ -169,19 +169,19 @@ const result = await RunAnywhere.synthesize(text, {
 
 ### Model Management
 
-The app uses RunAnywhere SDK's model management system:
+The app uses LocalAI SDK's model management system:
 
 ```typescript
-// Per RunAnywhere docs: https://docs.runanywhere.ai/react-native/stt/options
+// Per LocalAI docs: https://docs.latent.ai/react-native/stt/options
 
 // STT with language option
-await RunAnywhere.transcribe(audioData, {
+await LocalAI.transcribe(audioData, {
   language: 'es', // Spanish
   sampleRate: 16000,
 });
 
 // TTS with voice option
-await RunAnywhere.synthesize(text, {
+await LocalAI.synthesize(text, {
   voice: 'en_US-lessac-medium', // English voice
   rate: 1.0,
 });
@@ -230,7 +230,7 @@ Models can be downloaded:
 
 - **Automatically**: When user first accesses STT/TTS screens
 - **Manually**: Via model management in your app settings
-- **Programmatically**: Using `RunAnywhere.downloadModel()`
+- **Programmatically**: Using `LocalAI.downloadModel()`
 
 ## Architecture
 
@@ -348,7 +348,7 @@ To test the multi-language feature:
 
 ## Resources
 
-- [RunAnywhere STT Options Docs](https://docs.runanywhere.ai/react-native/stt/options)
-- [RunAnywhere TTS Voices Docs](https://docs.runanywhere.ai/react-native/tts/voices)
+- [LocalAI STT Options Docs](https://docs.latent.ai/react-native/stt/options)
+- [LocalAI TTS Voices Docs](https://docs.latent.ai/react-native/tts/voices)
 - [Whisper Model Languages](https://github.com/openai/whisper#available-models-and-languages)
 - [Piper TTS Voices](https://github.com/rhasspy/piper/blob/master/VOICES.md)

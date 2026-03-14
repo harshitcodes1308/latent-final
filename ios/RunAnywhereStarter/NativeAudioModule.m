@@ -1,6 +1,6 @@
 #import <React/RCTBridgeModule.h>
 
-@interface RCT_EXTERN_MODULE(NativeAudioModule, NSObject)
+@interface RCT_EXTERN_MODULE(LocalAudioModule, NSObject)
 
 // Recording
 RCT_EXTERN_METHOD(startRecording:(RCTPromiseResolveBlock)resolve

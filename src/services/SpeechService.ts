@@ -1,55 +1,29 @@
 /**
  * 🔒 PRIVACY NOTICE
- * All speech processing runs locally on device using RunAnywhere SDK.
- * Audio is processed in memory and transcribed locally.
+ * All speech processing runs locally on device using whisper.rn (whisper.cpp).
+ * Audio is processed on device and transcribed locally.
  * No audio data is sent to external servers.
  */
 
-import { NativeModules, Platform, PermissionsAndroid } from 'react-native';
-import { RunAnywhere } from '@runanywhere/core';
+import { Platform, PermissionsAndroid } from 'react-native';
+import RNFS from 'react-native-fs';
+import AudioRecord from 'react-native-live-audio-stream';
+import { initWhisper, WhisperContext } from 'whisper.rn';
 
-const { NativeAudioModule } = NativeModules;
+const DOMAIN_PROMPT =
+  'This conversation includes words like salary, fresher, offer, budget, negotiation, interview, compensation, package, client, proposal, anchor, objection, startup, candidate.';
 
-// ============================================================================
-// STT MODEL STATUS HELPERS
-// NOTE: Model loading is handled by ModelService.downloadAndLoadSTT() in App.tsx
-// ============================================================================
+const SAMPLE_RATE = 16000;
+const CHANNELS = 1;
+const BITS_PER_SAMPLE = 16;
+const CHUNK_MS = 5000;
+const SILENCE_TOKEN_REGEX = /\[BLANK_AUDIO\]|\[Pause\]|\[ Pause \]|\(Pause\)/gi;
 
-/**
- * Check if STT model is ready (async check with RunAnywhere SDK)
- */
+let whisperContext: WhisperContext | null = null;
+let whisperContextPath: string | null = null;
+
 export const checkSTTModelReady = async (): Promise<boolean> => {
-  try {
-    // First check if a model is actually loaded in the ONNX backend
-    const isLoaded = await RunAnywhere.isSTTModelLoaded();
-    if (isLoaded) {
-      console.log('[SpeechService] ✅ STT model is loaded (isSTTModelLoaded=true)');
-      return true;
-    }
-
-    // Fallback: check if model has a local path (downloaded but maybe not loaded)
-    const modelInfo = await RunAnywhere.getModelInfo('sherpa-onnx-whisper-base.en');
-    const hasLocalPath = !!modelInfo?.localPath;
-    console.log('[SpeechService] STT model check: isLoaded=false, hasLocalPath=', hasLocalPath);
-    
-    if (hasLocalPath) {
-      // Model is downloaded but not loaded - try to load it
-      console.log('[SpeechService] 🔄 Model downloaded but not loaded, attempting to load...');
-      try {
-        await RunAnywhere.loadSTTModel(modelInfo!.localPath!, 'whisper');
-        console.log('[SpeechService] ✅ STT model loaded successfully');
-        return true;
-      } catch (loadError) {
-        console.error('[SpeechService] ❌ Failed to load STT model:', loadError);
-        return false;
-      }
-    }
-
-    return false;
-  } catch (error) {
-    console.log('[SpeechService] STT model check failed:', error);
-    return false;
-  }
+  return whisperContext !== null;
 };
 
 export interface TranscriptionCallback {
@@ -60,31 +34,164 @@ export interface AudioLevelCallback {
   (level: number): void;
 }
 
-/**
- * SpeechService - Handles audio recording and speech-to-text
- */
-export class SpeechService {
-  private isRecording: boolean = false;
-  private recordingPath: string | null = null;
-  private recordingStartTime: number = 0;
-  private audioLevelInterval: NodeJS.Timeout | null = null;
-  private transcriptionInterval: NodeJS.Timeout | null = null;
-  private transcriptionCallback: TranscriptionCallback | null = null;
-  private audioLevelCallback: AudioLevelCallback | null = null;
-  private lastTranscriptionTime: number = 0;
+const decodeBase64 = (input: string): Uint8Array => {
+  const normalized = input.replace(/[^A-Za-z0-9+/=]/g, '');
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+  const bytes: number[] = [];
 
-  /**
-   * Request microphone permission (Android only)
-   */
-  async requestPermission(): Promise<boolean> {
-    if (Platform.OS !== 'android') {
-      console.log('[SpeechService] ✅ Platform is iOS, permission auto-granted');
-      return true;
+  let i = 0;
+  while (i < normalized.length) {
+    const c1 = chars.indexOf(normalized[i] ?? 'A');
+    const c2 = chars.indexOf(normalized[i + 1] ?? 'A');
+    const c3 = chars.indexOf(normalized[i + 2] ?? 'A');
+    const c4 = chars.indexOf(normalized[i + 3] ?? 'A');
+
+    const b1 = c1 * 4 + Math.floor(c2 / 16);
+    bytes.push(b1);
+
+    if ((normalized[i + 2] ?? '=') !== '=') {
+      const b2 = (c2 % 16) * 16 + Math.floor(c3 / 4);
+      bytes.push(b2);
     }
 
-    try {
-      console.log('[SpeechService] 🎤 Requesting RECORD_AUDIO permission...');
+    if ((normalized[i + 3] ?? '=') !== '=') {
+      const b3 = (c3 % 4) * 64 + c4;
+      bytes.push(b3);
+    }
 
+    i += 4;
+  }
+
+  return Uint8Array.from(bytes);
+};
+
+const encodeBase64 = (bytes: Uint8Array): string => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+  let result = '';
+  let index = 0;
+
+  while (index < bytes.length) {
+    const hasB1 = index < bytes.length;
+    const b1 = hasB1 ? bytes[index] : 0;
+    index += 1;
+
+    const hasB2 = index < bytes.length;
+    const b2 = hasB2 ? bytes[index] : 0;
+    index += 1;
+
+    const hasB3 = index < bytes.length;
+    const b3 = hasB3 ? bytes[index] : 0;
+    index += 1;
+
+    const n = b1 * 65536 + b2 * 256 + b3;
+
+    const e1 = Math.floor(n / 262144) % 64;
+    const e2 = Math.floor(n / 4096) % 64;
+    const e3 = Math.floor(n / 64) % 64;
+    const e4 = n % 64;
+
+    result += chars[e1];
+    result += chars[e2];
+    result += hasB2 ? chars[e3] : '=';
+    result += hasB3 ? chars[e4] : '=';
+  }
+
+  return result;
+};
+
+const concatBytes = (chunks: Uint8Array[]): Uint8Array => {
+  let total = 0;
+  for (const chunk of chunks) total += chunk.length;
+
+  const merged = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) {
+    merged.set(chunk, offset);
+    offset += chunk.length;
+  }
+
+  return merged;
+};
+
+const clamp01 = (value: number): number => Math.max(0, Math.min(1, value));
+
+const makeWavBytes = (
+  pcm: Uint8Array,
+  sampleRate: number,
+  channels: number,
+  bitsPerSample: number
+): Uint8Array => {
+  const blockAlign = (channels * bitsPerSample) / 8;
+  const byteRate = sampleRate * blockAlign;
+  const dataSize = pcm.length;
+  const wav = new Uint8Array(44 + dataSize);
+  const view = new DataView(wav.buffer);
+
+  wav[0] = 'R'.charCodeAt(0);
+  wav[1] = 'I'.charCodeAt(0);
+  wav[2] = 'F'.charCodeAt(0);
+  wav[3] = 'F'.charCodeAt(0);
+
+  view.setUint32(4, 36 + dataSize, true);
+
+  wav[8] = 'W'.charCodeAt(0);
+  wav[9] = 'A'.charCodeAt(0);
+  wav[10] = 'V'.charCodeAt(0);
+  wav[11] = 'E'.charCodeAt(0);
+
+  wav[12] = 'f'.charCodeAt(0);
+  wav[13] = 'm'.charCodeAt(0);
+  wav[14] = 't'.charCodeAt(0);
+  wav[15] = ' '.charCodeAt(0);
+
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, channels, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, byteRate, true);
+  view.setUint16(32, blockAlign, true);
+  view.setUint16(34, bitsPerSample, true);
+
+  wav[36] = 'd'.charCodeAt(0);
+  wav[37] = 'a'.charCodeAt(0);
+  wav[38] = 't'.charCodeAt(0);
+  wav[39] = 'a'.charCodeAt(0);
+
+  view.setUint32(40, dataSize, true);
+  wav.set(pcm, 44);
+
+  return wav;
+};
+
+export class SpeechService {
+  private isRecording = false;
+  private recordingStartTime = 0;
+  private transcriptionCallback: TranscriptionCallback | null = null;
+  private audioLevelCallback: AudioLevelCallback | null = null;
+
+  private audioLevelInterval: NodeJS.Timeout | null = null;
+  private transcriptionInterval: NodeJS.Timeout | null = null;
+
+  private pcmBuffer: Uint8Array[] = [];
+  private bytesSinceLastChunk = 0;
+  private chunkIndex = 0;
+
+  setWhisperContext(ctx: WhisperContext): void {
+    whisperContext = ctx;
+    console.log('[SpeechService] ✅ Whisper context injected');
+  }
+
+  async initWhisperContext(filePath: string): Promise<void> {
+    if (whisperContext && whisperContextPath === filePath) return;
+    whisperContext = await initWhisper({ filePath });
+    whisperContextPath = filePath;
+    console.log('[SpeechService] ✅ Whisper context initialized from path');
+  }
+
+  async requestPermission(): Promise<boolean> {
+    if (Platform.OS !== 'android') return true;
+
+    try {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
         {
@@ -96,65 +203,60 @@ export class SpeechService {
         }
       );
 
-      const isGranted = granted === PermissionsAndroid.RESULTS.GRANTED;
-      console.log(`[SpeechService] ${isGranted ? '✅' : '❌'} Permission ${granted}`);
-
-      return isGranted;
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
     } catch (error) {
       console.error('[SpeechService] ❌ Permission error:', error);
       return false;
     }
   }
 
-  /**
-   * Start recording audio
-   */
   async startRecording(
     onTranscription: TranscriptionCallback,
     onAudioLevel?: AudioLevelCallback
   ): Promise<boolean> {
     try {
-      console.log('[SpeechService] 🎙️ startRecording() called');
-
-      // Check native module
-      if (!NativeAudioModule) {
-        console.error('[SpeechService] ❌ NativeAudioModule not available');
+      if (this.isRecording) return true;
+      if (!whisperContext) {
+        console.error('[SpeechService] ❌ Whisper context not set');
         return false;
       }
-      console.log('[SpeechService] ✅ NativeAudioModule available');
 
-      // Request permission
       const hasPermission = await this.requestPermission();
       if (!hasPermission) {
         console.error('[SpeechService] ❌ Microphone permission denied');
         return false;
       }
-      console.log('[SpeechService] ✅ Microphone permission granted');
 
-      // Start native recording
-      console.log('[SpeechService] 📼 Starting native recording...');
-      const result = await NativeAudioModule.startRecording();
-
-      this.isRecording = true;
-      this.recordingPath = result.path;
-      this.recordingStartTime = Date.now();
       this.transcriptionCallback = onTranscription;
       this.audioLevelCallback = onAudioLevel || null;
+      this.recordingStartTime = Date.now();
+      this.isRecording = true;
+      this.pcmBuffer = [];
+      this.bytesSinceLastChunk = 0;
+      this.chunkIndex = 0;
+
+      const tempWav = `${RNFS.CachesDirectoryPath}/latent_live_stream.wav`;
+
+      AudioRecord.init({
+        sampleRate: SAMPLE_RATE,
+        channels: CHANNELS,
+        bitsPerSample: BITS_PER_SAMPLE,
+        wavFile: tempWav,
+      });
+
+      AudioRecord.on('data', (base64Chunk: string) => {
+        if (!this.isRecording) return;
+        const chunk = decodeBase64(base64Chunk);
+        this.pcmBuffer.push(chunk);
+        this.bytesSinceLastChunk += chunk.length;
+      });
+
+      AudioRecord.start();
+
+      this.startAudioLevelPolling();
+      this.startContinuousTranscription();
 
       console.log('[SpeechService] ✅ Recording started');
-      console.log('[SpeechService] 📁 Recording path:', result.path);
-      console.log('[SpeechService] ⏰ Recording start time:', this.recordingStartTime);
-
-      // Start audio level polling
-      if (onAudioLevel) {
-        this.startAudioLevelPolling();
-        console.log('[SpeechService] 🎚️ Audio level polling started');
-      }
-
-      // Start continuous transcription (every 5 seconds)
-      this.startContinuousTranscription();
-      console.log('[SpeechService] 🔄 Continuous transcription started');
-
       return true;
     } catch (error) {
       console.error('[SpeechService] ❌ Error starting recording:', error);
@@ -163,211 +265,65 @@ export class SpeechService {
     }
   }
 
-  /**
-   * Stop recording and transcribe
-   */
   async stopRecording(): Promise<string | null> {
     try {
-      if (!this.isRecording || !NativeAudioModule) {
-        return null;
-      }
+      if (!this.isRecording) return null;
 
-      // Stop audio level polling
       this.stopAudioLevelPolling();
-
-      // Stop continuous transcription
       this.stopContinuousTranscription();
 
-      // Stop native recording
-      console.log('[SpeechService] Stopping recording...');
-      const result = await NativeAudioModule.stopRecording();
-
+      await AudioRecord.stop();
       this.isRecording = false;
-      const audioPath = result.path || this.recordingPath;
 
-      if (!audioPath) {
-        console.error('[SpeechService] No audio path available');
-        return null;
-      }
+      const finalText = await this.flushCurrentBufferAsChunk(Date.now());
 
-      // Transcribe the audio
-      console.log('[SpeechService] Transcribing audio...');
-      const transcription = await this.transcribeAudio(audioPath);
-
-      // Clean up
-      this.recordingPath = null;
       this.transcriptionCallback = null;
       this.audioLevelCallback = null;
+      this.pcmBuffer = [];
+      this.bytesSinceLastChunk = 0;
 
-      return transcription;
+      return finalText;
     } catch (error) {
-      console.error('[SpeechService] Error stopping recording:', error);
+      console.error('[SpeechService] ❌ Error stopping recording:', error);
       this.isRecording = false;
       return null;
     }
   }
 
-  /**
-   * Cancel recording without transcribing
-   */
   async cancelRecording(): Promise<void> {
     try {
-      if (!this.isRecording || !NativeAudioModule) {
-        return;
-      }
+      if (!this.isRecording) return;
 
-      // Stop audio level polling
       this.stopAudioLevelPolling();
-
-      // Stop continuous transcription
       this.stopContinuousTranscription();
-
-      // Cancel native recording
-      await NativeAudioModule.cancelRecording();
+      await AudioRecord.stop();
 
       this.isRecording = false;
-      this.recordingPath = null;
       this.transcriptionCallback = null;
       this.audioLevelCallback = null;
-
-      console.log('[SpeechService] Recording cancelled');
+      this.pcmBuffer = [];
+      this.bytesSinceLastChunk = 0;
     } catch (error) {
-      console.error('[SpeechService] Error cancelling recording:', error);
+      console.error('[SpeechService] ❌ Error cancelling recording:', error);
       this.isRecording = false;
-    }
-  }
-
-  /**
-   * Transcribe audio file using RunAnywhere STT
-   */
-  private async transcribeAudio(audioPath: string): Promise<string | null> {
-    try {
-      console.log('[SpeechService] 🎯 transcribeAudio() called');
-      console.log('[SpeechService] 📁 Audio path:', audioPath);
-
-      // Check if STT model is ready
-      const modelReady = await checkSTTModelReady();
-      if (!modelReady) {
-        console.error('[SpeechService] ❌ STT model not ready');
-        throw new Error('STT model not loaded. Please ensure the model is downloaded.');
-      }
-
-      console.log('[SpeechService] ✅ STT model ready');
-
-      // Use the provided exact domain prompt bias string
-      const DOMAIN_PROMPT = "This conversation includes words like salary, fresher, offer, budget, negotiation, interview, compensation, package, client, proposal, anchor, objection, startup, candidate.";
-      console.log("[STT] Using domain prompt bias.");
-
-      // Use RunAnywhere.transcribeFile() API for file-based transcription
-      console.log('[SpeechService] 🤖 Running STT inference on file...');
-      const result = await RunAnywhere.transcribeFile(audioPath, {
-        initialPrompt: DOMAIN_PROMPT
-      } as any);
-
-      const transcription = result.text || '';
-      console.log('[SpeechService] ✅ Transcription complete');
-      console.log('[SpeechService] 📝 Text length:', transcription.length, 'chars');
-      console.log('[SpeechService] 📝 Text:', transcription);
-
-      // Call callback with transcription
-      if (this.transcriptionCallback) {
-        console.log('[SpeechService] 📤 Calling transcription callback');
-        this.transcriptionCallback(transcription, Date.now());
-      } else {
-        console.log('[SpeechService] ⚠️ No transcription callback registered');
-      }
-
-      return transcription;
-    } catch (error) {
-      console.error('[SpeechService] ❌ Transcription error:', error);
-      return null;
     }
   }
 
   private startContinuousTranscription(): void {
-    this.lastTranscriptionTime = Date.now();
-
-    // Check interval every 500ms, but only transcribe when 1.5 seconds have passed
     this.transcriptionInterval = setInterval(async () => {
       try {
-        if (!this.isRecording) return;
+        if (!this.isRecording || !whisperContext) return;
 
-        const currentTime = Date.now();
-        const timeSinceLast = currentTime - this.lastTranscriptionTime;
+        const requiredBytes = (SAMPLE_RATE * CHANNELS * (BITS_PER_SAMPLE / 8) * CHUNK_MS) / 1000;
+        if (this.bytesSinceLastChunk < requiredBytes) return;
 
-        // Extract and transcribe every 5.0 seconds for maximum stability and sentence context
-        if (timeSinceLast >= 5000) {
-          console.log(`[SpeechService] 🔄 Processing ${timeSinceLast}ms chunk...`);
-
-          if (!NativeAudioModule) {
-            console.warn('[SpeechService] ⚠️ NativeAudioModule not available');
-            return;
-          }
-
-          try {
-            // Get EXACTLY the audio recorded since the last transcription. No padding, no overlap.
-            // This guarantees that Whisper evaluates the new chunk as a completely unique, sequential audio segment.
-            const snapshot = await NativeAudioModule.getRecentAudioSnapshot(timeSinceLast);
-            const snapshotPath = snapshot.path;
-
-            if (!snapshotPath || snapshot.fileSize === 0) {
-              console.log('[SpeechService] ⚠️ No audio data in snapshot yet');
-              return;
-            }
-
-            console.log(
-              `[SpeechService] 📸 Got ${timeSinceLast}ms snapshot:`,
-              snapshotPath,
-              'size:',
-              snapshot.fileSize
-            );
-
-            // Use the provided exact domain prompt bias string
-            const DOMAIN_PROMPT = "This conversation includes words like salary, fresher, offer, budget, negotiation, interview, compensation, package, client, proposal, anchor, objection, startup, candidate.";
-            console.log("[STT] Using domain prompt bias.");
-
-            // Transcribe the small snapshot file (O(1) time)
-            const result = await RunAnywhere.transcribeFile(snapshotPath, {
-              initialPrompt: DOMAIN_PROMPT
-            } as any);
-            const newText = (result.text || '').trim();
-
-            if (newText && newText.length > 0) {
-              // Sanitize whisper STT tokens that appear during silence
-              const sanitized = newText
-                .replace(/\[BLANK_AUDIO\]/g, '')
-                .replace(/\[ Pause \]/gi, '')
-                .replace(/\(Pause\)/gi, '')
-                .trim();
-                
-              if (sanitized.length > 0) {
-                console.log('[SpeechService] ✅ New chunk transcription:', sanitized);
-                if (this.transcriptionCallback) {
-                  this.transcriptionCallback(sanitized, currentTime);
-                }
-              } else {
-                console.log('[SpeechService] ⚠️ Chunk was only silence/pause tokens');
-              }
-            } else {
-              console.log('[SpeechService] ⚠️ Empty transcription result for chunk');
-            }
-
-            // Important: Only update time if successful, so we don't drop audio if it failed
-            this.lastTranscriptionTime = currentTime;
-
-          } catch (transcribeError) {
-            console.log('[SpeechService] ⚠️ Continuous transcription skipped:', transcribeError);
-          }
-        }
+        await this.flushCurrentBufferAsChunk(Date.now());
       } catch (error) {
         console.error('[SpeechService] ❌ Continuous transcription error:', error);
       }
-    }, 1000); // Check interval
+    }, 1000);
   }
 
-  /**
-   * Stop continuous transcription
-   */
   private stopContinuousTranscription(): void {
     if (this.transcriptionInterval) {
       clearInterval(this.transcriptionInterval);
@@ -375,42 +331,13 @@ export class SpeechService {
     }
   }
 
-  /**
-   * Start polling audio levels
-   */
   private startAudioLevelPolling(): void {
-    let sampleCount = 0;
-
-    this.audioLevelInterval = setInterval(async () => {
-      try {
-        if (!NativeAudioModule || !this.isRecording) {
-          return;
-        }
-
-        const levelResult = await NativeAudioModule.getAudioLevel();
-        const level = levelResult.level || 0;
-
-        // Log first 3 samples for debugging
-        if (sampleCount < 3) {
-          console.log(`[SpeechService] 🎚️ Audio level sample ${sampleCount + 1}:`, level);
-          sampleCount++;
-        } else if (sampleCount === 3) {
-          console.log('[SpeechService] 🎚️ Audio level polling working (further logs suppressed)');
-          sampleCount++;
-        }
-
-        if (this.audioLevelCallback) {
-          this.audioLevelCallback(level);
-        }
-      } catch (error) {
-        // Ignore polling errors
-      }
-    }, 100); // Poll every 100ms
+    this.audioLevelInterval = setInterval(() => {
+      if (!this.isRecording || !this.audioLevelCallback) return;
+      this.audioLevelCallback(this.computeLevelFromRecentPCM());
+    }, 100);
   }
 
-  /**
-   * Stop polling audio levels
-   */
   private stopAudioLevelPolling(): void {
     if (this.audioLevelInterval) {
       clearInterval(this.audioLevelInterval);
@@ -418,26 +345,91 @@ export class SpeechService {
     }
   }
 
-  /**
-   * Get recording status
-   */
+  private computeLevelFromRecentPCM(): number {
+    if (this.pcmBuffer.length === 0) return 0;
+    const latest = this.pcmBuffer[this.pcmBuffer.length - 1];
+    if (!latest || latest.length < 2) return 0;
+
+    let sumSq = 0;
+    let samples = 0;
+
+    for (let i = 0; i + 1 < latest.length; i += 2) {
+      const lo = latest[i]!;
+      const hi = latest[i + 1]!;
+      const combined = hi * 256 + lo;
+      const signed = combined >= 32768 ? combined - 65536 : combined;
+      const normalized = signed / 32768;
+
+      sumSq += normalized * normalized;
+      samples += 1;
+    }
+
+    if (samples === 0) return 0;
+    const rms = Math.sqrt(sumSq / samples);
+    return clamp01(rms * 3);
+  }
+
+  private async flushCurrentBufferAsChunk(timestamp: number): Promise<string | null> {
+    if (!whisperContext || this.pcmBuffer.length === 0) return null;
+
+    const pcm = concatBytes(this.pcmBuffer);
+    this.pcmBuffer = [];
+    this.bytesSinceLastChunk = 0;
+
+    if (pcm.length === 0) return null;
+
+    const wavPath = `${RNFS.CachesDirectoryPath}/latent_chunk_${Date.now()}_${this.chunkIndex++}.wav`;
+
+    try {
+      const wavBytes = makeWavBytes(pcm, SAMPLE_RATE, CHANNELS, BITS_PER_SAMPLE);
+      const wavBase64 = encodeBase64(wavBytes);
+
+      await RNFS.writeFile(wavPath, wavBase64, 'base64');
+
+      const { promise } = whisperContext.transcribe(wavPath, {
+        language: 'en',
+        prompt: DOMAIN_PROMPT,
+      });
+
+      const result = await promise;
+      const rawText =
+        result.segments
+          ?.map((segment) => segment.text)
+          .join(' ')
+          .trim() ||
+        result.result ||
+        '';
+
+      const sanitized = rawText.replace(SILENCE_TOKEN_REGEX, '').trim();
+      if (!sanitized) return null;
+
+      if (this.transcriptionCallback) {
+        this.transcriptionCallback(sanitized, timestamp);
+      }
+
+      return sanitized;
+    } catch (error) {
+      console.error('[SpeechService] ❌ Chunk transcription failed:', error);
+      return null;
+    } finally {
+      try {
+        const exists = await RNFS.exists(wavPath);
+        if (exists) await RNFS.unlink(wavPath);
+      } catch {
+        // ignore cleanup errors
+      }
+    }
+  }
+
   getIsRecording(): boolean {
     return this.isRecording;
   }
 
-  /**
-   * Get recording duration in milliseconds
-   */
   getRecordingDuration(): number {
-    if (!this.isRecording) {
-      return 0;
-    }
+    if (!this.isRecording) return 0;
     return Date.now() - this.recordingStartTime;
   }
 
-  /**
-   * Cleanup on service destruction
-   */
   cleanup(): void {
     this.stopAudioLevelPolling();
     this.stopContinuousTranscription();

@@ -25,7 +25,7 @@ echo "✅ Models directory exists: $MODELS_DIR"
 echo ""
 
 # Check for model files
-MODEL_FILES=$(find "$MODELS_DIR" -type f \( -name "*.gguf" -o -name "*.onnx" -o -name "*whisper*" \) 2>/dev/null)
+MODEL_FILES=$(find "$MODELS_DIR" -type f \( -name "*.gguf" -o -name "*.gguf" -o -name "*whisper*" \) 2>/dev/null)
 
 if [ -z "$MODEL_FILES" ]; then
     echo "❌ No model files found in $MODELS_DIR"

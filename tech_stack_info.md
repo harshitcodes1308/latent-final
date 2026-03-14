@@ -14,18 +14,18 @@
 
 ---
 
-## On-Device AI: The RunAnywhere SDKs
+## On-Device AI: The LocalAI SDKs
 
-The entire artificial intelligence pipeline is powered exclusively by the **RunAnywhere SDK**. This allows massive neural network models (LLMs, STT, TTS) to run locally on the mobile phone's CPU/GPU.
+The entire artificial intelligence pipeline is powered exclusively by the **LocalAI SDK**. This allows massive neural network models (LLMs, STT, TTS) to run locally on the mobile phone's CPU/GPU.
 
 The following SDK modules are integrated into Latent:
 
-1.  **`@runanywhere/core`**
+1.  **`@latent/core`**
     - The foundational bridging layer that interfaces between React Native JavaScript and the underlying C++ native environment.
-2.  **`@runanywhere/onnx`**
+2.  **`@latent/onnx`**
     - The ONNX Runtime backend. This powers the **Speech-to-Text (STT)** engine using the _Sherpa Whisper Tiny_ model.
     - Also acts as the execution engine for the **Text-to-Speech (TTS)** pipeline using the _Piper TTS_ model.
-3.  **`@runanywhere/llamacpp`**
+3.  **`@latent/llamacpp`**
     - The Llama.cpp backend used for running full **Large Language Models (LLMs)** on-device, such as _Liquid LFM2 (350M)_ or _SmolLM2 (360M)_, without cloud latency.
 
 ---
@@ -43,7 +43,7 @@ The most critical architectural pillar of Latent is the **Zero-Cloud Data Policy
 ### 2. Live Transcription Pipeline (STT)
 
 - The `SpeechService.ts` module routinely chunks the incoming audio (e.g., every 1.5 to 5 seconds).
-- These localized audio snapshots are handed to the `RunAnywhere.transcribeFile()` C++ bridge.
+- These localized audio snapshots are handed to the `LocalAI.transcribeFile()` C++ bridge.
 - The **Sherpa Whisper Tiny ONNX** model analyzes the audio purely on local hardware. We inject a _Domain Bias Prompt_ natively to optimize the STT context for words involving finance, startup, and negotiation (e.g., prioritizing "salary" over "celery").
 - The C++ bridge returns the recognized text string back up to the JavaScript layer.
 

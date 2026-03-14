@@ -1,7 +1,7 @@
 /**
  * 🔒 PRIVACY NOTICE
  * All session management runs locally on device.
- * No data leaves this device. Uses RunAnywhere SDK for on-device inference only.
+ * No data leaves this device. Uses LocalAI SDK for on-device inference only.
  */
 
 /**

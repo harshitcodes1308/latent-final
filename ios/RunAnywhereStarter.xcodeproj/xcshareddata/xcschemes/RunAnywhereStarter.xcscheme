@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "RunAnywhereStarter.app"
-               BlueprintName = "RunAnywhereStarter"
-               ReferencedContainer = "container:RunAnywhereStarter.xcodeproj">
+               BuildableName = "LatentStarter.app"
+               BlueprintName = "LatentStarter"
+               ReferencedContainer = "container:LatentStarter.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "RunAnywhereStarterTests.xctest"
-               BlueprintName = "RunAnywhereStarterTests"
-               ReferencedContainer = "container:RunAnywhereStarter.xcodeproj">
+               BuildableName = "LatentStarterTests.xctest"
+               BlueprintName = "LatentStarterTests"
+               ReferencedContainer = "container:LatentStarter.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "RunAnywhereStarter.app"
-            BlueprintName = "RunAnywhereStarter"
-            ReferencedContainer = "container:RunAnywhereStarter.xcodeproj">
+            BuildableName = "LatentStarter.app"
+            BlueprintName = "LatentStarter"
+            ReferencedContainer = "container:LatentStarter.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "RunAnywhereStarter.app"
-            BlueprintName = "RunAnywhereStarter"
-            ReferencedContainer = "container:RunAnywhereStarter.xcodeproj">
+            BuildableName = "LatentStarter.app"
+            BlueprintName = "LatentStarter"
+            ReferencedContainer = "container:LatentStarter.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

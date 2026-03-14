@@ -9,8 +9,7 @@ platform :ios, min_ios_version_supported
 
 prepare_react_native_project!
 
-# Add NitroModules from react-native-nitro-modules
-pod 'NitroModules', :path => '../node_modules/react-native-nitro-modules'
+
 
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
@@ -18,7 +17,7 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-target 'RunAnywhereStarter' do
+target 'LatentStarter' do
   config = use_native_modules!
 
   use_react_native!(
@@ -29,7 +28,7 @@ target 'RunAnywhereStarter' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  target 'RunAnywhereStarterTests' do
+  target 'LatentStarterTests' do
     inherit! :complete
     # Pods for testing
   end
@@ -40,14 +39,14 @@ target 'RunAnywhereStarter' do
       config[:reactNativePath],
       :mac_catalyst_enabled => false
     )
-    
+
     # Remove RCT_NEW_ARCH_ENABLED from preprocessor definitions to disable New Architecture
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |build_config|
         if build_config.build_settings['GCC_PREPROCESSOR_DEFINITIONS']
-          build_config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] = 
-            build_config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'].reject { |def_| 
-              def_.include?('RCT_NEW_ARCH_ENABLED') 
+          build_config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] =
+            build_config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'].reject { |def_|
+              def_.include?('RCT_NEW_ARCH_ENABLED')
             }
         end
       end
