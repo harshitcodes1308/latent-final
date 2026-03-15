@@ -6,13 +6,13 @@ import { speechService } from './SpeechService';
 
 const MODEL_IDS = {
   llm: 'lfm2-350m-q8_0',
-  stt: 'ggml-tiny.en.bin',
+  stt: 'ggml-base.en.bin',
   tts: 'piper-tts-placeholder',
 } as const;
 
 const MODEL_URLS = {
   llm: 'https://huggingface.co/LiquidAI/LFM2-350M-GGUF/resolve/main/LFM2-350M-Q8_0.gguf',
-  stt: 'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.en.bin',
+  stt: 'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin',
 } as const;
 
 const MODEL_DIR = `${RNFS.DocumentDirectoryPath}/LatentModels`;

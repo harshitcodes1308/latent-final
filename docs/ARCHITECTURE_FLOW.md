@@ -76,7 +76,7 @@ ModelServiceProvider mounts
   │
   ├─ STT path:
   │    Download whisper model file (if missing)
-  │    └─ ggml-tiny.en.bin
+  │    └─ ggml-base.en.bin
   │
   ├─ LLM path:
   │    Download GGUF model file (if missing)

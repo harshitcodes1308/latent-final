@@ -83,7 +83,7 @@ This project has been migrated away from the previous SDK-coupled inference stac
 
 | Model | Runtime | Format | Purpose |
 |---|---|---|---|
-| `ggml-tiny.en.bin` (Whisper tiny English) | whisper.cpp via `whisper.rn` | native whisper model file | Low-latency English STT |
+| `ggml-base.en.bin` (Whisper base English) | whisper.cpp via `whisper.rn` | native whisper model file | Higher-accuracy English STT |
 | `LFM2-350M-Q8_0.gguf` | llama.cpp via `llama.rn` | GGUF | On-device LLM generation |
 
 > TTS model loading was intentionally removed from the critical path in this migration and left as a TODO for a future local TTS backend integration.

@@ -27,7 +27,7 @@ Latent has been migrated to an SDK-independent local inference stack:
 
 ### Models currently wired
 
-- **Whisper STT model:** `ggml-tiny.en.bin`
+- **Whisper STT model:** `ggml-base.en.bin`
 - **LLM model:** `LFM2-350M-Q8_0.gguf`
 
 ### Notes
