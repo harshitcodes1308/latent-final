@@ -80,7 +80,7 @@ export const PreSessionFormScreen: React.FC<Props> = ({ route, navigation }) => 
       style={styles.container} 
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <LinearGradient colors={['#0A0E1A', '#131A2A', '#1A233A']} style={styles.gradient}>
+      <LinearGradient colors={['#1E1E2E', '#252540', '#2E2E4A']} style={styles.gradient}>
         <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
           
           <View style={styles.header}>
@@ -125,7 +125,7 @@ export const PreSessionFormScreen: React.FC<Props> = ({ route, navigation }) => 
             activeOpacity={0.8}
           >
             <LinearGradient
-              colors={['#10B981', '#059669']}
+              colors={['#4CAF7D', '#3D9A6E']}
               style={styles.generateGradient}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
@@ -149,7 +149,7 @@ export const PreSessionFormScreen: React.FC<Props> = ({ route, navigation }) => 
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0A0E1A' },
+  container: { flex: 1, backgroundColor: '#1E1E2E' },
   gradient: { flex: 1 },
   scrollView: { flex: 1 },
   scrollContent: { padding: 24, paddingBottom: 60, paddingTop: 60 },
@@ -157,9 +157,9 @@ const styles = StyleSheet.create({
   header: { marginBottom: 32, alignItems: 'center' },
   iconContainer: { 
     width: 64, height: 64, borderRadius: 32, 
-    backgroundColor: 'rgba(123, 97, 255, 0.15)', 
+    backgroundColor: 'rgba(232, 87, 62, 0.15)', 
     justifyContent: 'center', alignItems: 'center', 
-    marginBottom: 16, borderWidth: 1, borderColor: 'rgba(123, 97, 255, 0.3)' 
+    marginBottom: 16, borderWidth: 1, borderColor: 'rgba(232, 87, 62, 0.3)' 
   },
   headerIcon: { fontSize: 32 },
   subtitle: { color: AppColors.accentPrimary, fontSize: 13, fontWeight: '800', letterSpacing: 1.5, marginBottom: 8 },
@@ -173,9 +173,9 @@ const styles = StyleSheet.create({
   optionalText: { color: '#4B5563', fontSize: 13, marginLeft: 8 },
   
   input: {
-    backgroundColor: '#161B22',
+    backgroundColor: '#282840',
     borderWidth: 1,
-    borderColor: '#30363D',
+    borderColor: '#3A3A52',
     borderRadius: 12,
     color: '#FFFFFF',
     fontSize: 16,
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     marginTop: 10,
     elevation: 8,
-    shadowColor: '#10B981',
+    shadowColor: '#4CAF7D',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 10,

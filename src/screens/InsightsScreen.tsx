@@ -50,10 +50,10 @@ export const InsightsScreen: React.FC<InsightsScreenProps> = ({ navigation, rout
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#7B61FF" />
+      <StatusBar barStyle="light-content" backgroundColor="#E8573E" />
 
       {/* Header */}
-      <LinearGradient colors={['#7B61FF', '#9B82FF', '#B19CFF']} style={styles.header}>
+      <LinearGradient colors={['#E8573E', '#F4845F', '#F9A88C']} style={styles.header}>
         <View style={styles.headerTop}>
           <View style={styles.modeTag}>
             <Text style={styles.modeIcon}>{modeConfig.icon}</Text>
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
 
   tabs: { flexDirection: 'row', backgroundColor: '#FFFFFF', paddingHorizontal: 4, paddingVertical: 4, marginHorizontal: 16, borderRadius: 16, marginTop: -6, marginBottom: 16, elevation: 3, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 6 },
   tab: { flex: 1, paddingVertical: 10, alignItems: 'center', borderRadius: 12 },
-  tabActive: { backgroundColor: '#7B61FF' },
+  tabActive: { backgroundColor: '#E8573E' },
   tabText: { fontSize: 14, fontWeight: '600', color: AppColors.textSecondary },
   tabTextActive: { color: '#FFFFFF' },
 
@@ -213,34 +213,34 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: 18, fontWeight: '700', color: AppColors.textPrimary, marginBottom: 12 },
 
   insightCard: { flexDirection: 'row', backgroundColor: '#FFFFFF', borderRadius: 16, marginBottom: 8, overflow: 'hidden', elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4 },
-  insightAccent: { width: 4, backgroundColor: '#7B61FF' },
+  insightAccent: { width: 4, backgroundColor: '#E8573E' },
   insightText: { flex: 1, fontSize: 14, color: AppColors.textPrimary, lineHeight: 20, padding: 14 },
 
   suggestionCard: { flexDirection: 'row', backgroundColor: '#FFFFFF', padding: 14, borderRadius: 16, marginBottom: 8, alignItems: 'flex-start', elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4 },
-  suggestionNum: { width: 28, height: 28, borderRadius: 10, backgroundColor: '#EDE9FE', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
-  suggestionNumText: { fontSize: 14, fontWeight: '700', color: '#7B61FF' },
+  suggestionNum: { width: 28, height: 28, borderRadius: 10, backgroundColor: '#FFF0EB', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
+  suggestionNumText: { fontSize: 14, fontWeight: '700', color: '#E8573E' },
   suggestionText: { flex: 1, fontSize: 14, color: AppColors.textPrimary, lineHeight: 20 },
 
-  momentCard: { backgroundColor: '#DCFCE7', padding: 14, borderRadius: 14, marginBottom: 8 },
+  momentCard: { backgroundColor: '#E8F5EC', padding: 14, borderRadius: 14, marginBottom: 8 },
   momentText: { fontSize: 13, color: '#166534', lineHeight: 18 },
-  oppCard: { backgroundColor: '#FEF3C7', padding: 14, borderRadius: 14, marginBottom: 8 },
+  oppCard: { backgroundColor: '#FFF5E6', padding: 14, borderRadius: 14, marginBottom: 8 },
   oppText: { fontSize: 13, color: '#92400E', lineHeight: 18 },
 
   metricsGrid: { flexDirection: 'row', gap: 10 },
   metricCard: { flex: 1, backgroundColor: '#FFFFFF', padding: 18, borderRadius: 18, alignItems: 'center', elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4 },
-  metricValue: { fontSize: 24, fontWeight: '700', color: '#7B61FF', marginBottom: 6 },
+  metricValue: { fontSize: 24, fontWeight: '700', color: '#E8573E', marginBottom: 6 },
   metricLabel: { fontSize: 11, color: AppColors.textSecondary, textAlign: 'center', fontWeight: '500' },
 
   patternCard: { backgroundColor: '#FFFFFF', padding: 16, borderRadius: 18, marginBottom: 12, elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4 },
   patternHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
   patternName: { fontSize: 16, fontWeight: '700', color: AppColors.textPrimary, flex: 1 },
-  patternBadge: { backgroundColor: '#EDE9FE', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
-  patternBadgeText: { fontSize: 12, fontWeight: '700', color: '#7B61FF' },
+  patternBadge: { backgroundColor: '#FFF0EB', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
+  patternBadgeText: { fontSize: 12, fontWeight: '700', color: '#E8573E' },
   patternDesc: { fontSize: 13, color: AppColors.textSecondary, marginBottom: 10, lineHeight: 18 },
-  patternSugg: { backgroundColor: '#F8F5FF', padding: 12, borderRadius: 12, marginBottom: 8 },
+  patternSugg: { backgroundColor: '#FFF5EE', padding: 12, borderRadius: 12, marginBottom: 8 },
   patternSuggLabel: { fontSize: 11, fontWeight: '600', color: AppColors.textMuted, marginBottom: 4 },
   patternSuggText: { fontSize: 13, color: AppColors.textPrimary, lineHeight: 18 },
-  patternCtx: { padding: 12, backgroundColor: '#F9FAFB', borderRadius: 12, borderLeftWidth: 3, borderLeftColor: '#7B61FF' },
+  patternCtx: { padding: 12, backgroundColor: '#F9FAFB', borderRadius: 12, borderLeftWidth: 3, borderLeftColor: '#E8573E' },
   patternCtxText: { fontSize: 12, fontStyle: 'italic', color: AppColors.textSecondary, lineHeight: 16 },
 
   tChunk: { marginBottom: 16, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },

@@ -30,7 +30,7 @@ export const PreSessionStrategyScreen: React.FC<Props> = ({ route, navigation })
 
   return (
     <View style={styles.container}>
-      <LinearGradient colors={['#0A0E1A', '#131A2A', '#1A233A']} style={styles.gradient}>
+      <LinearGradient colors={['#1E1E2E', '#252540', '#2E2E4A']} style={styles.gradient}>
         <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
           
           <View style={styles.header}>
@@ -49,7 +49,7 @@ export const PreSessionStrategyScreen: React.FC<Props> = ({ route, navigation })
           {/* 2. Opening Script */}
           <View style={styles.section}>
             <Text style={styles.sectionHeader}>2. Opening Statement Script</Text>
-            <LinearGradient colors={['rgba(16, 185, 129, 0.1)', 'rgba(52, 211, 153, 0.05)']} style={styles.scriptBox}>
+            <LinearGradient colors={['rgba(76, 175, 125, 0.1)', 'rgba(109, 207, 151, 0.05)']} style={styles.scriptBox}>
               <Text style={styles.scriptText}>{analysis.openingScript}</Text>
             </LinearGradient>
           </View>
@@ -136,7 +136,7 @@ export const PreSessionStrategyScreen: React.FC<Props> = ({ route, navigation })
           {/* 10. Closing Script */}
           <View style={styles.section}>
             <Text style={styles.sectionHeader}>9. Closing Script (To force commitment)</Text>
-            <LinearGradient colors={['rgba(123, 97, 255, 0.15)', 'rgba(155, 130, 255, 0.05)']} style={styles.scriptBox}>
+            <LinearGradient colors={['rgba(232, 87, 62, 0.15)', 'rgba(244, 132, 95, 0.05)']} style={styles.scriptBox}>
               <Text style={styles.scriptText}>{analysis.closingScript}</Text>
             </LinearGradient>
           </View>
@@ -148,7 +148,7 @@ export const PreSessionStrategyScreen: React.FC<Props> = ({ route, navigation })
             activeOpacity={0.8}
           >
             <LinearGradient
-              colors={['#E11D48', '#BE123C']} // Strong Red for Live mode
+              colors={['#E8573E', '#D04530']}
               style={styles.startGradient}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
@@ -168,7 +168,7 @@ export const PreSessionStrategyScreen: React.FC<Props> = ({ route, navigation })
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0A0E1A' },
+  container: { flex: 1, backgroundColor: '#1E1E2E' },
   gradient: { flex: 1 },
   scrollView: { flex: 1 },
   scrollContent: { padding: 24, paddingBottom: 60, paddingTop: 60 },
@@ -180,27 +180,27 @@ const styles = StyleSheet.create({
   section: { marginBottom: 32 },
   sectionHeader: { fontSize: 18, fontWeight: '700', color: '#E6EDF3', marginBottom: 16 },
 
-  cardPrimary: { backgroundColor: '#161B22', borderRadius: 16, padding: 20, borderWidth: 1, borderColor: '#30363D' },
+  cardPrimary: { backgroundColor: '#282840', borderRadius: 16, padding: 20, borderWidth: 1, borderColor: '#3A3A52' },
   cardTextPrimary: { color: '#FFFFFF', fontSize: 16, lineHeight: 24, fontWeight: '500' },
 
-  scriptBox: { borderRadius: 12, padding: 20, borderWidth: 1, borderColor: 'rgba(123, 97, 255, 0.3)' },
+  scriptBox: { borderRadius: 12, padding: 20, borderWidth: 1, borderColor: 'rgba(232, 87, 62, 0.3)' },
   scriptText: { color: '#FFFFFF', fontSize: 18, fontStyle: 'italic', fontWeight: 'bold', lineHeight: 26 },
 
-  objectionCard: { backgroundColor: '#161B22', padding: 20, borderRadius: 16, borderWidth: 1, borderColor: '#30363D', marginBottom: 16 },
+  objectionCard: { backgroundColor: '#282840', padding: 20, borderRadius: 16, borderWidth: 1, borderColor: '#3A3A52', marginBottom: 16 },
   objectionLabel: { color: '#F87171', fontSize: 12, fontWeight: '700', textTransform: 'uppercase', marginBottom: 6 },
   objectionText: { color: '#FFFFFF', fontSize: 16, fontStyle: 'italic', marginBottom: 16 },
-  divider: { height: 1, backgroundColor: '#30363D', marginBottom: 16 },
-  responseLabel: { color: '#10B981', fontSize: 12, fontWeight: '700', textTransform: 'uppercase', marginBottom: 6 },
+  divider: { height: 1, backgroundColor: '#3A3A52', marginBottom: 16 },
+  responseLabel: { color: '#4CAF7D', fontSize: 12, fontWeight: '700', textTransform: 'uppercase', marginBottom: 6 },
   responseText: { color: '#FFFFFF', fontSize: 16, fontWeight: '600', lineHeight: 24 },
 
   wrapContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  goodBadge: { backgroundColor: 'rgba(16, 185, 129, 0.1)', paddingHorizontal: 14, paddingVertical: 10, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(16, 185, 129, 0.3)' },
-  goodBadgeText: { color: '#10B981', fontSize: 14, fontWeight: '600' },
+  goodBadge: { backgroundColor: 'rgba(76, 175, 125, 0.1)', paddingHorizontal: 14, paddingVertical: 10, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(76, 175, 125, 0.3)' },
+  goodBadgeText: { color: '#4CAF7D', fontSize: 14, fontWeight: '600' },
   
   badBadge: { backgroundColor: 'rgba(239, 68, 68, 0.1)', paddingHorizontal: 14, paddingVertical: 10, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(239, 68, 68, 0.3)' },
   badBadgeText: { color: '#F87171', fontSize: 14, fontWeight: '600', textDecorationLine: 'line-through' },
 
-  cardSecondary: { backgroundColor: '#161B22', borderRadius: 16, padding: 20, borderWidth: 1, borderColor: '#30363D' },
+  cardSecondary: { backgroundColor: '#282840', borderRadius: 16, padding: 20, borderWidth: 1, borderColor: '#3A3A52' },
   cardError: { backgroundColor: 'rgba(239, 68, 68, 0.05)', borderRadius: 16, padding: 20, borderWidth: 1, borderColor: 'rgba(239, 68, 68, 0.2)' },
   
   bulletRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 12 },
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
   errorBulletPoint: { color: '#F87171', fontSize: 16, marginRight: 10, fontWeight: 'bold' },
   errorText: { color: '#F87171', fontSize: 15, lineHeight: 22, flex: 1, fontWeight: '500' },
 
-  startButton: { borderRadius: 16, overflow: 'hidden', elevation: 8, shadowColor: '#E11D48', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 10 },
+  startButton: { borderRadius: 16, overflow: 'hidden', elevation: 8, shadowColor: '#E8573E', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 10 },
   startGradient: { paddingVertical: 20, alignItems: 'center', justifyContent: 'center' },
   buttonStack: { alignItems: 'center' },
   startButtonText: { color: '#FFFFFF', fontSize: 20, fontWeight: '800', marginBottom: 4 },

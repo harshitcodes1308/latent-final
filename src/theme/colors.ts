@@ -1,65 +1,65 @@
 /**
- * App color palette - Premium Light Purple Fintech Theme
- * Inspired by modern banking/fintech app design
- * Soft lavender backgrounds with purple accent cards
+ * App color palette - Warm Modern Health Theme
+ * Soft cream backgrounds with coral/terracotta accent cards
+ * Inspired by modern health & wellness app design
  */
 export const AppColors = {
-  // Backgrounds - Light lavender/purple
-  primaryLight: '#F5F0FF',
-  primaryBg: '#EDE5FF',
-  primaryMid: '#E8DFFF',
+  // Backgrounds - Warm cream/beige
+  primaryLight: '#FFF8F2',
+  primaryBg: '#FFF0E6',
+  primaryMid: '#FFE8D9',
   surfaceCard: '#FFFFFF',
-  surfaceElevated: '#F8F5FF',
+  surfaceElevated: '#FFF5EE',
 
   // NOT USED for backward compat — mapped to new palette
-  primaryDark: '#F5F0FF',
+  primaryDark: '#FFF8F2',
 
-  // Purple gradient accent
-  purpleGradientStart: '#7B61FF',
-  purpleGradientEnd: '#9B82FF',
-  purpleLight: '#C4B5FD',
-  purpleMuted: '#DDD6FE',
-  purpleSoft: '#EDE9FE',
+  // Coral gradient accent
+  purpleGradientStart: '#E8573E',
+  purpleGradientEnd: '#F4845F',
+  purpleLight: '#F9B4A0',
+  purpleMuted: '#FCDDD4',
+  purpleSoft: '#FFF0EB',
 
-  // Primary accent - Purple
-  accentPrimary: '#7B61FF',
-  accentSecondary: '#9B82FF',
-  accentTeal: '#7B61FF', // backward compat alias
-  accentTealLight: '#9B82FF',
-  accentTealDark: '#6C4DE6',
-  accentCyan: '#7B61FF', // backward compat
-  accentViolet: '#6C4DE6',
-  accentPink: '#F472B6',
-  accentGreen: '#34C759',
-  accentOrange: '#FF9F0A',
+  // Primary accent - Coral/Terracotta
+  accentPrimary: '#E8573E',
+  accentSecondary: '#F4845F',
+  accentTeal: '#E8573E', // backward compat alias
+  accentTealLight: '#F4845F',
+  accentTealDark: '#D04530',
+  accentCyan: '#E8573E', // backward compat
+  accentViolet: '#D04530',
+  accentPink: '#E8573E',
+  accentGreen: '#4CAF7D',
+  accentOrange: '#F5A623',
 
   // Text colors
-  textPrimary: '#1A1A2E',
+  textPrimary: '#2D2D3A',
   textSecondary: '#6B7280',
   textMuted: '#9CA3AF',
 
   // Status colors
-  success: '#34C759',
-  warning: '#FF9F0A',
-  error: '#FF3B30',
-  info: '#007AFF',
+  success: '#4CAF7D',
+  warning: '#F5A623',
+  error: '#E8573E',
+  info: '#5B9BD5',
 
   // Transaction icon colors
-  iconOrange: '#FF9F43',
-  iconBlue: '#54A0FF',
-  iconGreen: '#00D2D3',
-  iconPurple: '#A29BFE',
-  iconPink: '#FF6B6B',
-  iconTeal: '#1DD1A1',
+  iconOrange: '#F4845F',
+  iconBlue: '#5B9BD5',
+  iconGreen: '#4CAF7D',
+  iconPurple: '#B68DD9',
+  iconPink: '#E8573E',
+  iconTeal: '#4CAF7D',
 
   // Glassmorphism / card styling
   glassBg: 'rgba(255, 255, 255, 0.7)',
   glassBgLight: 'rgba(255, 255, 255, 0.85)',
-  glassBorder: 'rgba(123, 97, 255, 0.12)',
-  glassBorderLight: 'rgba(123, 97, 255, 0.08)',
+  glassBorder: 'rgba(232, 87, 62, 0.12)',
+  glassBorderLight: 'rgba(232, 87, 62, 0.08)',
 
   // Shadow
-  shadowPurple: '#7B61FF',
+  shadowPurple: '#E8573E',
   shadowDark: 'rgba(0, 0, 0, 0.08)',
 } as const;
 

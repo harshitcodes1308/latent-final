@@ -52,7 +52,7 @@ export const OutcomeReplayScreen: React.FC<OutcomeReplayScreenProps> = ({ route,
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#0A0E1A', '#131A2A', '#1A233A']}
+        colors={['#1E1E2E', '#252540', '#2E2E4A']}
         style={styles.gradient}
       >
         <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
@@ -129,7 +129,7 @@ export const OutcomeReplayScreen: React.FC<OutcomeReplayScreenProps> = ({ route,
               <View style={styles.divider} />
 
               <Text style={styles.summaryLabel}>Follow-up Strategy</Text>
-              <LinearGradient colors={['rgba(123, 97, 255, 0.15)', 'rgba(155, 130, 255, 0.05)']} style={styles.strategyBox}>
+              <LinearGradient colors={['rgba(232, 87, 62, 0.15)', 'rgba(244, 132, 95, 0.05)']} style={styles.strategyBox}>
                 <Text style={styles.strategyText}>{simulation.postSessionSummary.followUpStrategy}</Text>
               </LinearGradient>
             </View>
@@ -156,7 +156,7 @@ export const OutcomeReplayScreen: React.FC<OutcomeReplayScreenProps> = ({ route,
                         <Text style={styles.originalQuote}>"{opp.originalQuote}"</Text>
 
                         {/* Improved Sim */}
-                        <LinearGradient colors={['rgba(16, 185, 129, 0.1)', 'rgba(52, 211, 153, 0.05)']} style={styles.improvedBox}>
+                        <LinearGradient colors={['rgba(76, 175, 125, 0.1)', 'rgba(109, 207, 151, 0.05)']} style={styles.improvedBox}>
                             <Text style={styles.oppTitleGood}>Improved Strategic Framing</Text>
                             <Text style={styles.improvedQuote}>"{opp.improvedReframing}"</Text>
                             
@@ -189,8 +189,8 @@ export const OutcomeReplayScreen: React.FC<OutcomeReplayScreenProps> = ({ route,
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0A0E1A' },
-  loadingContainer: { flex: 1, backgroundColor: '#0A0E1A', justifyContent: 'center', alignItems: 'center' },
+  container: { flex: 1, backgroundColor: '#1E1E2E' },
+  loadingContainer: { flex: 1, backgroundColor: '#1E1E2E', justifyContent: 'center', alignItems: 'center' },
   loadingText: { color: '#8B949E', marginTop: 16, fontSize: 16 },
   gradient: { flex: 1 },
   scrollView: { flex: 1 },
@@ -202,32 +202,32 @@ const styles = StyleSheet.create({
   sectionHeader: { fontSize: 20, fontWeight: '700', color: '#E6EDF3', marginBottom: 16 },
   
   // Profile
-  profileCard: { backgroundColor: '#161B22', borderRadius: 16, padding: 20, borderWidth: 1, borderColor: '#30363D' },
+  profileCard: { backgroundColor: '#282840', borderRadius: 16, padding: 20, borderWidth: 1, borderColor: '#3A3A52' },
   archetypeContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 20 },
-  badge: { backgroundColor: 'rgba(123, 97, 255, 0.15)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(123, 97, 255, 0.3)' },
-  badgeText: { color: '#B19CFF', fontSize: 13, fontWeight: '600' },
-  statsRow: { flexDirection: 'row', justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: '#30363D', paddingTop: 16 },
+  badge: { backgroundColor: 'rgba(232, 87, 62, 0.15)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(232, 87, 62, 0.3)' },
+  badgeText: { color: '#F9A88C', fontSize: 13, fontWeight: '600' },
+  statsRow: { flexDirection: 'row', justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: '#3A3A52', paddingTop: 16 },
   statBox: { alignItems: 'center' },
   statLabel: { color: '#8B949E', fontSize: 12, marginBottom: 4 },
   statValue: { fontSize: 24, fontWeight: '800' },
   statValueAlt: { color: '#E6EDF3', fontSize: 24, fontWeight: '700' },
 
   // Counterfactuals
-  simulationCard: { backgroundColor: '#161B22', borderRadius: 16, padding: 20, borderWidth: 1, borderColor: '#30363D', marginBottom: 16 },
-  tacticLabelContainer: { alignSelf: 'flex-start', backgroundColor: '#30363D', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, marginBottom: 16 },
+  simulationCard: { backgroundColor: '#282840', borderRadius: 16, padding: 20, borderWidth: 1, borderColor: '#3A3A52', marginBottom: 16 },
+  tacticLabelContainer: { alignSelf: 'flex-start', backgroundColor: '#3A3A52', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, marginBottom: 16 },
   tacticLabelText: { color: '#C9D1D9', fontSize: 11, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1 },
   oppTitle: { color: '#8B949E', fontSize: 12, fontWeight: '700', textTransform: 'uppercase', marginBottom: 8 },
   originalQuote: { color: '#E6EDF3', fontSize: 16, fontStyle: 'italic', lineHeight: 24, marginBottom: 20 },
-  improvedBox: { borderRadius: 12, padding: 16, borderWidth: 1, borderColor: 'rgba(16, 185, 129, 0.2)' },
-  oppTitleGood: { color: '#10B981', fontSize: 12, fontWeight: '700', textTransform: 'uppercase', marginBottom: 8 },
+  improvedBox: { borderRadius: 12, padding: 16, borderWidth: 1, borderColor: 'rgba(76, 175, 125, 0.2)' },
+  oppTitleGood: { color: '#4CAF7D', fontSize: 12, fontWeight: '700', textTransform: 'uppercase', marginBottom: 8 },
   improvedQuote: { color: '#FFFFFF', fontSize: 16, fontWeight: '600', lineHeight: 24, marginBottom: 16 },
   deltaBox: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'rgba(0,0,0,0.2)', padding: 10, borderRadius: 8 },
   deltaLabel: { color: '#8B949E', fontSize: 13, fontWeight: '600' },
   deltaScores: { fontSize: 16, fontWeight: '700' },
   deltaBad: { color: AppColors.error },
-  deltaGood: { color: '#10B981' },
+  deltaGood: { color: '#4CAF7D' },
 
-  emptyCard: { padding: 20, backgroundColor: '#161B22', borderRadius: 12, alignItems: 'center' },
+  emptyCard: { padding: 20, backgroundColor: '#282840', borderRadius: 12, alignItems: 'center' },
   emptyText: { color: '#8B949E' },
 
   doneButton: { backgroundColor: AppColors.accentPrimary, borderRadius: 12, paddingVertical: 16, alignItems: 'center', marginTop: 10 },
@@ -248,16 +248,16 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: '#333333',
+    backgroundColor: '#3A3A52',
     marginVertical: 12,
   },
 
   // Summary Card
-  summaryCard: { backgroundColor: '#161B22', borderRadius: 16, padding: 20, borderWidth: 1, borderColor: '#30363D' },
+  summaryCard: { backgroundColor: '#282840', borderRadius: 16, padding: 20, borderWidth: 1, borderColor: '#3A3A52' },
   summaryLabel: { color: '#8B949E', fontSize: 13, fontWeight: '700', textTransform: 'uppercase', marginBottom: 12 },
-  bulletPointSuccess: { color: '#10B981', fontSize: 16, marginRight: 10, marginTop: 1, fontWeight: '700' },
+  bulletPointSuccess: { color: '#4CAF7D', fontSize: 16, marginRight: 10, marginTop: 1, fontWeight: '700' },
   bulletPointPrimary: { color: AppColors.accentPrimary, fontSize: 16, marginRight: 10, marginTop: 1, fontWeight: '700' },
-  bulletPointWarning: { color: '#F59E0B', fontSize: 16, marginRight: 10, marginTop: 1, fontWeight: '700' },
-  strategyBox: { borderRadius: 12, padding: 16, borderWidth: 1, borderColor: 'rgba(123, 97, 255, 0.3)' },
+  bulletPointWarning: { color: '#F5A623', fontSize: 16, marginRight: 10, marginTop: 1, fontWeight: '700' },
+  strategyBox: { borderRadius: 12, padding: 16, borderWidth: 1, borderColor: 'rgba(232, 87, 62, 0.3)' },
   strategyText: { color: '#FFFFFF', fontSize: 15, fontWeight: '600', lineHeight: 22 },
 });

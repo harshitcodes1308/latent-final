@@ -34,7 +34,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ navigation }) =>
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={AppColors.primaryLight} />
-      <LinearGradient colors={['#F5F0FF', '#EDE5FF']} style={styles.gradient}>
+      <LinearGradient colors={['#FFF8F2', '#FFF0E6']} style={styles.gradient}>
         <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
           <View style={styles.header}>
             <Text style={styles.title}>Settings</Text>
@@ -96,7 +96,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ navigation }) =>
                   <Text style={styles.settingDesc}>{s.desc}</Text>
                 </View>
                 <Switch value={settings[s.key]} onValueChange={(v) => saveSettings({ ...settings, [s.key]: v })}
-                  trackColor={{ false: '#E5E7EB', true: '#C4B5FD' }} thumbColor={settings[s.key] ? '#7B61FF' : '#D1D5DB'} />
+                  trackColor={{ false: '#E5E7EB', true: '#F9B4A0' }} thumbColor={settings[s.key] ? '#E8573E' : '#D1D5DB'} />
               </View>
             ))}
           </View>
@@ -112,7 +112,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ navigation }) =>
               <Switch value={settings.debugMode || false} onValueChange={(v) => {
                 saveSettings({ ...settings, debugMode: v });
                 if (v) Alert.alert('Debug Mode Enabled', 'Hardcoded transcripts will be used. Restart your session.', [{ text: 'Got it' }]);
-              }} trackColor={{ false: '#E5E7EB', true: '#FDE68A' }} thumbColor={settings.debugMode ? '#F59E0B' : '#D1D5DB'} />
+              }} trackColor={{ false: '#E5E7EB', true: '#FDE68A' }} thumbColor={settings.debugMode ? '#F5A623' : '#D1D5DB'} />
             </View>
             {settings.debugMode && (
               <View style={styles.debugNotice}><Text style={styles.debugNoticeText}>⚠️ Debug mode active. Test transcripts injected every 7s.</Text></View>
@@ -145,7 +145,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ navigation }) =>
 
           {/* About */}
           <View style={styles.aboutSection}>
-            <LinearGradient colors={['#7B61FF', '#9B82FF']} style={styles.aboutLogo}>
+            <LinearGradient colors={['#E8573E', '#F4845F']} style={styles.aboutLogo}>
               <Text style={styles.aboutLogoText}>L</Text>
             </LinearGradient>
             <Text style={styles.aboutTitle}>Latent</Text>
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: 16, fontWeight: '700', color: AppColors.textPrimary, marginBottom: 14 },
 
   modeButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', padding: 16, borderRadius: 18, elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 4 },
-  modeIconCircle: { width: 48, height: 48, borderRadius: 16, backgroundColor: '#EDE9FE', justifyContent: 'center', alignItems: 'center', marginRight: 14 },
+  modeIconCircle: { width: 48, height: 48, borderRadius: 16, backgroundColor: '#FFF0EB', justifyContent: 'center', alignItems: 'center', marginRight: 14 },
   modeIcon: { fontSize: 24 },
   modeInfo: { flex: 1 },
   modeName: { fontSize: 16, fontWeight: '600', color: AppColors.textPrimary, marginBottom: 3 },
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
 
   sensitivityBtns: { flexDirection: 'row', gap: 6 },
   sensBtn: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: '#F3F4F6' },
-  sensBtnActive: { backgroundColor: '#7B61FF' },
+  sensBtnActive: { backgroundColor: '#E8573E' },
   sensBtnText: { fontSize: 12, fontWeight: '600', color: AppColors.textSecondary },
   sensBtnTextActive: { color: '#FFFFFF' },
 
@@ -201,20 +201,20 @@ const styles = StyleSheet.create({
   dangerButton: { backgroundColor: '#FEE2E2', padding: 16, borderRadius: 16, alignItems: 'center' },
   dangerButtonText: { fontSize: 15, fontWeight: '600', color: '#DC2626' },
 
-  debugNotice: { backgroundColor: '#FEF3C7', padding: 14, borderRadius: 14, marginTop: 10, borderLeftWidth: 3, borderLeftColor: '#F59E0B' },
+  debugNotice: { backgroundColor: '#FFF5E6', padding: 14, borderRadius: 14, marginTop: 10, borderLeftWidth: 3, borderLeftColor: '#F5A623' },
   debugNoticeText: { fontSize: 12, color: '#92400E', lineHeight: 16 },
 
   privacyCard: { flexDirection: 'row', backgroundColor: '#FFFFFF', padding: 18, borderRadius: 20, marginBottom: 28, alignItems: 'center', elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 6 },
-  privacyIconCircle: { width: 44, height: 44, borderRadius: 14, backgroundColor: '#EDE9FE', justifyContent: 'center', alignItems: 'center', marginRight: 14 },
+  privacyIconCircle: { width: 44, height: 44, borderRadius: 14, backgroundColor: '#FFF0EB', justifyContent: 'center', alignItems: 'center', marginRight: 14 },
   privacyIcon: { fontSize: 22 },
   privacyText: { flex: 1 },
   privacyTitle: { fontSize: 15, fontWeight: '600', color: AppColors.textPrimary, marginBottom: 3 },
   privacyDesc: { fontSize: 12, color: AppColors.textSecondary, lineHeight: 17 },
 
   aboutSection: { alignItems: 'center', paddingTop: 8, paddingBottom: 20 },
-  aboutLogo: { width: 56, height: 56, borderRadius: 18, justifyContent: 'center', alignItems: 'center', marginBottom: 12, elevation: 4, shadowColor: '#7B61FF', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.3, shadowRadius: 8 },
+  aboutLogo: { width: 56, height: 56, borderRadius: 18, justifyContent: 'center', alignItems: 'center', marginBottom: 12, elevation: 4, shadowColor: '#E8573E', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.3, shadowRadius: 8 },
   aboutLogoText: { fontSize: 24, fontWeight: '700', color: '#FFFFFF' },
   aboutTitle: { fontSize: 22, fontWeight: '700', color: AppColors.textPrimary, marginBottom: 4 },
-  aboutSubtitle: { fontSize: 14, color: '#7B61FF', marginBottom: 8 },
+  aboutSubtitle: { fontSize: 14, color: '#E8573E', marginBottom: 8 },
   aboutVersion: { fontSize: 12, color: AppColors.textMuted },
 });

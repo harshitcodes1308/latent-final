@@ -40,7 +40,7 @@ export const SessionSummaryCard: React.FC<SessionSummaryCardProps> = ({ session,
   };
 
   const getIconBg = (index: number): string => {
-    const colors = ['#EDE9FE', '#DCFCE7', '#FEF3C7', '#FCE7F3', '#DBEAFE'];
+    const colors = ['#FFF0EB', '#E8F5EC', '#FFF5E6', '#FCE7F3', '#E8F0FA'];
     return colors[index % colors.length];
   };
 
