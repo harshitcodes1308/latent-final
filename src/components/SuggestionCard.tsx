@@ -27,8 +27,8 @@ export const SuggestionCard: React.FC<SuggestionCardProps> = ({ pattern }) => {
     switch (pattern.severity) {
       case 'high': return ['#FF3B30', '#C53030'];
       case 'medium': return ['#FF9F0A', '#D97706'];
-      case 'low': return ['#7B61FF', '#9B82FF'];
-      default: return ['#7B61FF', '#9B82FF'];
+      case 'low': return ['#E8573E', '#F4845F'];
+      default: return ['#E8573E', '#F4845F'];
     }
   };
 
@@ -52,7 +52,7 @@ export const SuggestionCard: React.FC<SuggestionCardProps> = ({ pattern }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { marginHorizontal: 16, marginBottom: 10, borderRadius: 20, overflow: 'hidden', elevation: 6, shadowColor: '#7B61FF', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.25, shadowRadius: 12 },
+  container: { marginHorizontal: 16, marginBottom: 10, borderRadius: 20, overflow: 'hidden', elevation: 6, shadowColor: '#E8573E', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.25, shadowRadius: 12 },
   gradient: { padding: 16 },
   header: { marginBottom: 12 },
   titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },

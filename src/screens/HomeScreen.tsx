@@ -12,6 +12,7 @@ import {
   Dimensions,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import Svg, { Circle } from 'react-native-svg';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AppColors } from '../theme';
 import { RootStackParamList } from '../navigation/types';
@@ -25,6 +26,63 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 type HomeScreenProps = {
   navigation: StackNavigationProp<RootStackParamList, 'Home'>;
 };
+
+// ─── Mini Mastery Gauge Component ───
+const MasteryGauge: React.FC<{ score: number; size?: number }> = ({ score, size = 120 }) => {
+  const strokeWidth = 12;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = Math.PI * radius; // half circle
+  const clampedScore = Math.min(100, Math.max(0, score));
+  const strokeDashoffset = circumference * (1 - clampedScore / 100);
+
+  return (
+    <View style={{ width: size, height: size / 2 + 20, alignItems: 'center', justifyContent: 'flex-end' }}>
+      <Svg width={size} height={size / 2 + strokeWidth} style={{ position: 'absolute', top: 0 }}>
+        {/* Background track */}
+        <Circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke="rgba(255,255,255,0.25)"
+          strokeWidth={strokeWidth}
+          fill="none"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={0}
+          rotation={-180}
+          origin={`${size / 2}, ${size / 2}`}
+        />
+        {/* Progress arc */}
+        <Circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke="#F5A623"
+          strokeWidth={strokeWidth}
+          fill="none"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={strokeDashoffset}
+          rotation={-180}
+          origin={`${size / 2}, ${size / 2}`}
+        />
+      </Svg>
+      <Text style={styles.gaugeScore}>{clampedScore}</Text>
+    </View>
+  );
+};
+
+// ─── Progress Bar Component ───
+const ProgressBar: React.FC<{ progress: number; colors: string[] }> = ({ progress, colors }) => (
+  <View style={styles.progressBarBg}>
+    <LinearGradient
+      colors={colors}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 0 }}
+      style={[styles.progressBarFill, { width: `${Math.min(Math.max(progress, 5), 100)}%` }]}
+    />
+  </View>
+);
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const { sessions, stats, isLoading, refreshSessions } = useSessionAnalyzer();
@@ -59,12 +117,31 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     return 'Good Evening';
   };
 
+  // Calculate mastery score from stats
+  const masteryScore = stats && stats.totalSessions > 0
+    ? Math.round(stats.avgFocusScore)
+    : 0;
+
+  // Calculate progress for each mode based on sessions
+  const liveSessionCount = sessions.filter(s => s.mode).length;
+  const liveProgress = Math.min(liveSessionCount * 20, 100);
+  const replayProgress = sessions.length > 0 ? Math.min(sessions.length * 15, 100) : 0;
+  const practiceProgress = 0; // Coming soon
+
+  // Focus areas
+  const getFocusLabel = (score: number): string => {
+    if (score >= 80) return 'Advanced';
+    if (score >= 60) return 'Proficient';
+    if (score >= 40) return 'Developing';
+    return 'Foundational';
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={AppColors.primaryLight} />
 
       <LinearGradient
-        colors={['#F5F0FF', '#EDE5FF', '#E8DFFF']}
+        colors={['#FFF8F2', '#FFF0E6', '#FFE8D9']}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
         style={styles.gradient}
@@ -85,7 +162,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           <View style={styles.header}>
             <View style={styles.headerLeft}>
               <LinearGradient
-                colors={['#7B61FF', '#9B82FF']}
+                colors={['#E8573E', '#F4845F']}
                 style={styles.avatar}
               >
                 <Text style={styles.avatarText}>L</Text>
@@ -103,32 +180,44 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             </TouchableOpacity>
           </View>
 
-          {/* Balance Card */}
+          {/* ─── Mastery Score Hero Card ─── */}
           <LinearGradient
-            colors={['#7B61FF', '#9B82FF', '#B19CFF']}
+            colors={['#E8573E', '#F4845F', '#F9A88C']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
-            style={styles.balanceCard}
+            style={styles.masteryCard}
           >
-            <Text style={styles.balanceLabel}>TOTAL SESSIONS</Text>
-            <Text style={styles.balanceAmount}>
-              {stats ? stats.totalSessions : 0}
-            </Text>
-            {stats && stats.totalSessions > 0 && (
-              <View style={styles.balanceBadge}>
-                <Text style={styles.balanceBadgeText}>
-                  📈 {Math.round(stats.avgFocusScore)}% avg focus
+            <Text style={styles.masteryLabel}>Negotiation Mastery Score</Text>
+
+            <View style={styles.masteryContent}>
+              <View style={styles.masteryFocusColumn}>
+                <Text style={styles.focusTitle}>Key Focus:</Text>
+                <Text style={styles.focusSkill}>Empathy</Text>
+                <Text style={styles.focusLevel}>({getFocusLabel(masteryScore)})</Text>
+              </View>
+
+              <MasteryGauge score={masteryScore} size={130} />
+
+              <View style={styles.masteryFocusColumn}>
+                <Text style={styles.focusTitle}>Persuasion</Text>
+                <Text style={styles.focusLevel}>({getFocusLabel(Math.max(0, masteryScore - 10))})</Text>
+              </View>
+            </View>
+
+            {stats && stats.totalSessions > 0 ? (
+              <View style={styles.masteryBadge}>
+                <Text style={styles.masteryBadgeText}>
+                  📈 {stats.totalSessions} session{stats.totalSessions !== 1 ? 's' : ''} completed
                 </Text>
               </View>
-            )}
-            {!stats || stats.totalSessions === 0 ? (
-              <View style={styles.balanceBadge}>
-                <Text style={styles.balanceBadgeText}>✨ Ready to start</Text>
+            ) : (
+              <View style={styles.masteryBadge}>
+                <Text style={styles.masteryBadgeText}>✨ Ready to start</Text>
               </View>
-            ) : null}
+            )}
           </LinearGradient>
 
-          {/* Action Buttons */}
+          {/* ─── Action Cards with Progress ─── */}
           <View style={styles.actionColumn}>
             {/* Live Tactical Mode */}
             <TouchableOpacity
@@ -136,16 +225,22 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
               onPress={() => setShowModeSelector(true)}
               activeOpacity={0.8}
             >
-              <LinearGradient
-                colors={['#7B61FF', '#9B82FF']}
-                style={styles.actionCircleLarge}
-              >
-                <Text style={styles.actionIconLarge}>🎤</Text>
-              </LinearGradient>
-              <View style={styles.actionTextContent}>
-                <Text style={styles.actionLabelLarge}>Live Tactical Mode</Text>
-                <Text style={styles.actionSubLabelLarge}>Real-time negotiation intelligence</Text>
+              <View style={styles.actionRow}>
+                <LinearGradient
+                  colors={['#E8573E', '#F4845F']}
+                  style={styles.actionCircleLarge}
+                >
+                  <Text style={styles.actionIconLarge}>🎤</Text>
+                  <View style={styles.liveBadge}>
+                    <Text style={styles.liveBadgeText}>LIVE</Text>
+                  </View>
+                </LinearGradient>
+                <View style={styles.actionTextContent}>
+                  <Text style={styles.actionLabelLarge}>Live Tactical Mode</Text>
+                  <Text style={styles.actionSubLabelLarge}>Real-time negotiation intelligence</Text>
+                </View>
               </View>
+              <ProgressBar progress={liveProgress} colors={['#E8573E', '#F4845F']} />
             </TouchableOpacity>
 
             {/* Strategic Outcome Replay */}
@@ -160,16 +255,19 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
               }}
               activeOpacity={0.8}
             >
-              <LinearGradient
-                colors={['#10B981', '#34D399']}
-                style={styles.actionCircleLarge}
-              >
-                <Text style={styles.actionIconLarge}>🧠</Text>
-              </LinearGradient>
-              <View style={styles.actionTextContent}>
-                <Text style={styles.actionLabelLarge}>Strategic Outcome Replay™</Text>
-                <Text style={styles.actionSubLabelLarge}>Counterfactual behavior modeling</Text>
+              <View style={styles.actionRow}>
+                <LinearGradient
+                  colors={['#4CAF7D', '#6FCF97']}
+                  style={styles.actionCircleLarge}
+                >
+                  <Text style={styles.actionIconLarge}>🧠</Text>
+                </LinearGradient>
+                <View style={styles.actionTextContent}>
+                  <Text style={styles.actionLabelLarge}>Strategic Outcome Replay™</Text>
+                  <Text style={styles.actionSubLabelLarge}>Counterfactual behavior modeling</Text>
+                </View>
               </View>
+              <ProgressBar progress={replayProgress} colors={['#4CAF7D', '#6FCF97']} />
             </TouchableOpacity>
 
             {/* Practice Simulation */}
@@ -178,20 +276,23 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
               onPress={() => Alert.alert('Coming Soon', 'Practice Simulation Engine is under construction.')}
               activeOpacity={0.8}
             >
-              <LinearGradient
-                colors={['#F59E0B', '#FBBF24']}
-                style={styles.actionCircleLarge}
-              >
-                <Text style={styles.actionIconLarge}>⚔️</Text>
-              </LinearGradient>
-              <View style={styles.actionTextContent}>
-                <Text style={styles.actionLabelLarge}>Practice Simulation</Text>
-                <Text style={styles.actionSubLabelLarge}>Mock scenarios against AI</Text>
+              <View style={styles.actionRow}>
+                <LinearGradient
+                  colors={['#F5A623', '#F7C26B']}
+                  style={styles.actionCircleLarge}
+                >
+                  <Text style={styles.actionIconLarge}>⚔️</Text>
+                </LinearGradient>
+                <View style={styles.actionTextContent}>
+                  <Text style={styles.actionLabelLarge}>Practice Simulation</Text>
+                  <Text style={styles.actionSubLabelLarge}>Mock scenarios against AI</Text>
+                </View>
               </View>
+              <ProgressBar progress={practiceProgress} colors={['#F5A623', '#F7C26B']} />
             </TouchableOpacity>
           </View>
 
-          {/* Recent Sessions */}
+          {/* ─── Recent Sessions Carousel ─── */}
           <View style={styles.sessionsSection}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Recent Sessions</Text>
@@ -216,7 +317,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                   onPress={() => setShowModeSelector(true)}
                 >
                   <LinearGradient
-                    colors={['#7B61FF', '#9B82FF']}
+                    colors={['#E8573E', '#F4845F']}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                     style={styles.emptyButtonGradient}
@@ -226,13 +327,35 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                 </TouchableOpacity>
               </View>
             ) : (
-              sessions.map((session) => (
-                <SessionSummaryCard
-                  key={session.id}
-                  session={session}
-                  onPress={() => handleSessionPress(session.id)}
-                />
-              ))
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.sessionCarousel}
+              >
+                {sessions.map((session, index) => (
+                  <TouchableOpacity
+                    key={session.id}
+                    style={styles.sessionCarouselCard}
+                    onPress={() => handleSessionPress(session.id)}
+                    activeOpacity={0.7}
+                  >
+                    <View style={styles.sessionCardHeader}>
+                      <Text style={styles.sessionCardTitle}>
+                        Session {index + 1}: {session.mode.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                      </Text>
+                      <Text style={styles.sessionCardBadge}>
+                        {session.cognitiveMetrics.focusScore >= 70 ? '✅' : '⭐'}
+                      </Text>
+                    </View>
+                    <Text style={styles.sessionCardScenario} numberOfLines={1}>
+                      {formatDuration(session.duration)} session
+                    </Text>
+                    <Text style={styles.sessionCardScore}>
+                      Score: {Math.round(session.cognitiveMetrics.focusScore)}%
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
             )}
           </View>
 
@@ -242,7 +365,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
               <Text style={styles.sectionTitle}>Quick Stats</Text>
               <View style={styles.quickStatsGrid}>
                 <View style={styles.quickStatCard}>
-                  <View style={[styles.quickStatIcon, { backgroundColor: '#EDE9FE' }]}>
+                  <View style={[styles.quickStatIcon, { backgroundColor: '#FFF0EB' }]}>
                     <Text style={styles.quickStatEmoji}>🎯</Text>
                   </View>
                   <Text style={styles.quickStatValue}>
@@ -251,7 +374,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                   <Text style={styles.quickStatLabel}>Avg Focus</Text>
                 </View>
                 <View style={styles.quickStatCard}>
-                  <View style={[styles.quickStatIcon, { backgroundColor: '#DCFCE7' }]}>
+                  <View style={[styles.quickStatIcon, { backgroundColor: '#E8F5EC' }]}>
                     <Text style={styles.quickStatEmoji}>📈</Text>
                   </View>
                   <Text style={styles.quickStatValue}>
@@ -260,7 +383,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                   <Text style={styles.quickStatLabel}>Patterns</Text>
                 </View>
                 <View style={styles.quickStatCard}>
-                  <View style={[styles.quickStatIcon, { backgroundColor: '#FEF3C7' }]}>
+                  <View style={[styles.quickStatIcon, { backgroundColor: '#FFF5E6' }]}>
                     <Text style={styles.quickStatEmoji}>⏱️</Text>
                   </View>
                   <Text style={styles.quickStatValue}>
@@ -280,14 +403,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           )}
         </ScrollView>
 
-        {/* Floating Action Button */}
+        {/* ─── GO LIVE Floating Action Button ─── */}
         <TouchableOpacity
           style={styles.fab}
           onPress={() => setShowModeSelector(true)}
           activeOpacity={0.85}
         >
           <LinearGradient
-            colors={['#7B61FF', '#6C4DE6']}
+            colors={['#E8573E', '#D04530']}
             style={styles.fabGradient}
           >
             <Text style={styles.fabIcon}>🎤</Text>
@@ -311,7 +434,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             <Text style={styles.navIcon}>📊</Text>
             <Text style={styles.navLabel}>Insights</Text>
           </TouchableOpacity>
-          <View style={styles.navItemSpacer} />
+
+          {/* GO LIVE center button */}
+          <TouchableOpacity
+            style={styles.navItemCenter}
+            onPress={() => setShowModeSelector(true)}
+          >
+            <Text style={styles.goLiveLabel}>GO LIVE</Text>
+          </TouchableOpacity>
+
           <TouchableOpacity style={styles.navItem}>
             <Text style={styles.navIcon}>📁</Text>
             <Text style={styles.navLabel}>History</Text>
@@ -418,7 +549,7 @@ const styles = StyleSheet.create({
   },
   greeting: {
     fontSize: 14,
-    color: '#6B6B80',
+    color: '#6B7280',
     fontWeight: '400',
     marginBottom: 4,
   },
@@ -426,7 +557,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     letterSpacing: 0.5,
-    color: '#1E1E2C',
+    color: '#2D2D3A',
   },
   notificationButton: {
     width: 44,
@@ -436,58 +567,84 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(123, 97, 255, 0.08)',
+    borderColor: 'rgba(232, 87, 62, 0.08)',
   },
   notificationIcon: {
     fontSize: 20,
   },
 
-  // Balance Card
-  balanceCard: {
+  // ─── Mastery Score Card ───
+  masteryCard: {
     borderRadius: 24,
-    padding: 28,
+    padding: 24,
     marginBottom: 28,
     alignItems: 'center',
     elevation: 12,
-    shadowColor: '#7B61FF',
+    shadowColor: '#E8573E',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.35,
     shadowRadius: 20,
   },
-  balanceLabel: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: 'rgba(255, 255, 255, 0.7)',
-    letterSpacing: 2,
-    marginBottom: 12,
-  },
-  balanceAmount: {
-    fontSize: 48,
+  masteryLabel: {
+    fontSize: 16,
     fontWeight: '700',
     color: '#FFFFFF',
-    letterSpacing: -1,
-    marginBottom: 14,
+    letterSpacing: 0.5,
+    marginBottom: 8,
   },
-  balanceBadge: {
+  masteryContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginBottom: 8,
+  },
+  masteryFocusColumn: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  focusTitle: {
+    fontSize: 11,
+    color: 'rgba(255,255,255,0.7)',
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  focusSkill: {
+    fontSize: 13,
+    color: '#FFFFFF',
+    fontWeight: '700',
+  },
+  focusLevel: {
+    fontSize: 11,
+    color: 'rgba(255,255,255,0.6)',
+    fontWeight: '500',
+  },
+  gaugeScore: {
+    fontSize: 36,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+  },
+  masteryBadge: {
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     paddingHorizontal: 16,
     paddingVertical: 6,
     borderRadius: 20,
   },
-  balanceBadgeText: {
+  masteryBadgeText: {
     fontSize: 13,
     fontWeight: '600',
     color: '#FFFFFF',
   },
 
+  // ─── Action Cards ───
   actionColumn: {
     flexDirection: 'column',
     gap: 16,
     marginBottom: 36,
   },
   actionItemLarge: {
-    flexDirection: 'row',
-    alignItems: 'center',
     backgroundColor: '#FFFFFF',
     padding: 20,
     borderRadius: 24,
@@ -496,6 +653,11 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.05,
     shadowRadius: 10,
+  },
+  actionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 14,
   },
   actionCircleLarge: {
     width: 64,
@@ -508,18 +670,46 @@ const styles = StyleSheet.create({
   actionIconLarge: {
     fontSize: 28,
   },
+  liveBadge: {
+    position: 'absolute',
+    bottom: -4,
+    backgroundColor: '#D04530',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+  },
+  liveBadgeText: {
+    fontSize: 8,
+    fontWeight: '900',
+    color: '#FFFFFF',
+    letterSpacing: 1,
+  },
   actionTextContent: {
     flex: 1,
   },
   actionLabelLarge: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#1A1A2E',
+    color: '#2D2D3A',
     marginBottom: 4,
   },
   actionSubLabelLarge: {
     fontSize: 14,
     color: '#8B949E',
+  },
+
+  // ─── Progress Bar ───
+  progressBarBg: {
+    height: 6,
+    backgroundColor: '#F3F4F6',
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
+  progressBarFill: {
+    height: '100%',
+    borderRadius: 3,
   },
 
   // Section
@@ -543,6 +733,50 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
+  // ─── Session Carousel ───
+  sessionCarousel: {
+    paddingRight: 24,
+    gap: 12,
+  },
+  sessionCarouselCard: {
+    width: SCREEN_WIDTH * 0.45,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    padding: 16,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+  },
+  sessionCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 8,
+  },
+  sessionCardTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: AppColors.textPrimary,
+    flex: 1,
+    lineHeight: 18,
+  },
+  sessionCardBadge: {
+    fontSize: 16,
+    marginLeft: 6,
+  },
+  sessionCardScenario: {
+    fontSize: 12,
+    color: AppColors.textSecondary,
+    marginBottom: 8,
+  },
+  sessionCardScore: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#E8573E',
+  },
+
   // Empty State
   emptyState: {
     alignItems: 'center',
@@ -559,7 +793,7 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: 36,
-    backgroundColor: '#EDE9FE',
+    backgroundColor: '#FFF0EB',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
@@ -647,10 +881,10 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     zIndex: 10,
     elevation: 12,
-    shadowColor: '#7B61FF',
+    shadowColor: '#E8573E',
     shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
+    shadowOpacity: 0.5,
+    shadowRadius: 16,
   },
   fabGradient: {
     width: 60,
@@ -668,7 +902,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#FFFFFF',
     paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
     paddingBottom: 20,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
@@ -686,8 +920,18 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 6,
   },
-  navItemSpacer: {
-    width: 60,
+  navItemCenter: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 70,
+    paddingVertical: 6,
+  },
+  goLiveLabel: {
+    fontSize: 11,
+    fontWeight: '900',
+    color: '#E8573E',
+    letterSpacing: 0.5,
+    marginTop: 26,
   },
   navIcon: {
     fontSize: 22,
@@ -747,18 +991,18 @@ const styles = StyleSheet.create({
   modeCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F8F5FF',
+    backgroundColor: '#FFF5EE',
     padding: 16,
     borderRadius: 18,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: 'rgba(123, 97, 255, 0.08)',
+    borderColor: 'rgba(232, 87, 62, 0.08)',
   },
   modeIconCircle: {
     width: 48,
     height: 48,
     borderRadius: 16,
-    backgroundColor: '#EDE9FE',
+    backgroundColor: '#FFF0EB',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 14,

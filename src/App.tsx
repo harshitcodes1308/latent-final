@@ -20,24 +20,24 @@ const App: React.FC = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ModelServiceProvider>
-        <StatusBar barStyle="dark-content" backgroundColor="#F5F0FF" />
+        <StatusBar barStyle="dark-content" backgroundColor="#FFF8F2" />
         <NavigationContainer>
           <Stack.Navigator
             screenOptions={{
               headerStyle: {
-                backgroundColor: '#F5F0FF',
+                backgroundColor: '#FFF8F2',
                 elevation: 0,
                 shadowOpacity: 0,
                 borderBottomWidth: 0,
               },
-              headerTintColor: '#1A1A2E',
+              headerTintColor: '#2D2D3A',
               headerTitleStyle: {
                 fontWeight: '700',
                 fontSize: 18,
-                color: '#1A1A2E',
+                color: '#2D2D3A',
               },
               cardStyle: {
-                backgroundColor: '#F5F0FF',
+                backgroundColor: '#FFF8F2',
               },
               // iOS-like animations
               ...TransitionPresets.SlideFromRightIOS,
@@ -48,12 +48,12 @@ const App: React.FC = () => {
             <Stack.Screen
               name="PreSessionForm"
               component={PreSessionFormScreen}
-              options={{ title: 'Strategic Preparation', headerStyle: { backgroundColor: '#0A0E1A' }, headerTintColor: '#FFFFFF' }}
+              options={{ title: 'Strategic Preparation', headerStyle: { backgroundColor: '#1E1E2E' }, headerTintColor: '#FFFFFF' }}
             />
             <Stack.Screen
               name="PreSessionStrategy"
               component={PreSessionStrategyScreen}
-              options={{ title: 'Offline Analysis', headerStyle: { backgroundColor: '#0A0E1A' }, headerTintColor: '#FFFFFF' }}
+              options={{ title: 'Offline Analysis', headerStyle: { backgroundColor: '#1E1E2E' }, headerTintColor: '#FFFFFF' }}
             />
             <Stack.Screen
               name="LiveSession"

@@ -234,7 +234,7 @@ export const LiveSessionScreen: React.FC<LiveSessionScreenProps> = ({ navigation
 
       {state.audioLevel > 0 && (
         <View style={styles.audioVisualizer}>
-          <LinearGradient colors={['#7B61FF', '#9B82FF']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+          <LinearGradient colors={['#E8573E', '#F4845F']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
             style={[styles.audioBar, { width: `${Math.min(state.audioLevel * 100, 100)}%` }]} />
         </View>
       )}
@@ -245,17 +245,17 @@ export const LiveSessionScreen: React.FC<LiveSessionScreenProps> = ({ navigation
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: AppColors.primaryLight },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 32 },
-  loadingIconCircle: { width: 80, height: 80, borderRadius: 28, backgroundColor: '#EDE9FE', justifyContent: 'center', alignItems: 'center', marginBottom: 24 },
+  loadingIconCircle: { width: 80, height: 80, borderRadius: 28, backgroundColor: '#FFF0EB', justifyContent: 'center', alignItems: 'center', marginBottom: 24 },
   loadingIcon: { fontSize: 36 },
   loadingTitle: { fontSize: 22, fontWeight: '700', color: AppColors.textPrimary, marginBottom: 8, textAlign: 'center' },
   loadingText: { fontSize: 15, color: AppColors.textSecondary, marginBottom: 32, textAlign: 'center' },
-  loadingBarBg: { width: '60%', height: 6, borderRadius: 3, backgroundColor: '#EDE9FE', overflow: 'hidden' },
+  loadingBarBg: { width: '60%', height: 6, borderRadius: 3, backgroundColor: '#FFF0EB', overflow: 'hidden' },
   loadingBar: { width: '45%', height: '100%', borderRadius: 3 },
 
   topBar: { paddingTop: 50, paddingBottom: 16, paddingHorizontal: 20, backgroundColor: '#FFFFFF', borderBottomLeftRadius: 24, borderBottomRightRadius: 24, elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8 },
   topBarContent: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   topBarLeft: { flex: 1 },
-  modeTag: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#EDE9FE', paddingVertical: 6, paddingHorizontal: 12, borderRadius: 10, alignSelf: 'flex-start', marginBottom: 12 },
+  modeTag: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFF0EB', paddingVertical: 6, paddingHorizontal: 12, borderRadius: 10, alignSelf: 'flex-start', marginBottom: 12 },
   modeIconText: { fontSize: 16, marginRight: 6 },
   modeText: { fontSize: 13, fontWeight: '600', color: AppColors.accentPrimary },
   recordingIndicator: { flexDirection: 'row', alignItems: 'center' },
@@ -278,6 +278,6 @@ const styles = StyleSheet.create({
   stopButtonIcon: { fontSize: 20, marginRight: 8 },
   stopButtonText: { fontSize: 16, fontWeight: '700', color: '#FFFFFF' },
 
-  audioVisualizer: { position: 'absolute', bottom: 0, left: 0, right: 0, height: 3, backgroundColor: '#EDE9FE' },
+  audioVisualizer: { position: 'absolute', bottom: 0, left: 0, right: 0, height: 3, backgroundColor: '#FFF0EB' },
   audioBar: { height: '100%', borderRadius: 2 },
 });

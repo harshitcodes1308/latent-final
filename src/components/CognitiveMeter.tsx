@@ -47,7 +47,7 @@ export const CognitiveMeter: React.FC<CognitiveMeterProps> = ({ focusScore, size
       {/* Circle container — fixed size for the donut */}
       <View style={[styles.circleContainer, { width: size, height: size }]}>
         {/* Background track */}
-        <View style={[styles.circle, { width: size, height: size, borderRadius: size / 2, borderWidth: 8, borderColor: '#EDE9FE' }]} />
+        <View style={[styles.circle, { width: size, height: size, borderRadius: size / 2, borderWidth: 8, borderColor: '#FCDDD4' }]} />
         {/* Animated progress arc */}
         <Animated.View style={[styles.circle, {
           width: size, height: size, borderRadius: size / 2, borderWidth: 8,

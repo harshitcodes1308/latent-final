@@ -92,11 +92,11 @@ export const DisclaimerScreen: React.FC<DisclaimerScreenProps> = ({ navigation }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0E1A', // Dark professional theme
+    backgroundColor: '#1E1E2E',
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#0A0E1A',
+    backgroundColor: '#1E1E2E',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -125,11 +125,11 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   card: {
-    backgroundColor: '#161B22',
+    backgroundColor: '#282840',
     borderRadius: 16,
     padding: 24,
     borderWidth: 1,
-    borderColor: '#30363D',
+    borderColor: '#3A3A52',
     marginBottom: 40,
   },
   bulletPoint: {
