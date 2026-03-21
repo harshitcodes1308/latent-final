@@ -151,6 +151,8 @@ export interface SessionStats {
   mostCommonPattern: NegotiationPattern | null;
   totalPatterns: number;
   lastSessionDate: number | null;
+  currentStreak?: number;
+  weeklySessionsCount?: number;
 }
 
 /**
@@ -208,4 +210,23 @@ export interface CounterStrategy {
   suggestions: string[];
   explanation: string;
   timestamp: number;
+}
+
+/**
+ * Mastery score entry saved after each session
+ */
+export interface MasteryScoreEntry {
+  score: number;       // 0–100
+  timestamp: number;   // Date.now() when session ended
+}
+
+/**
+ * Weekly analysis result for mastery score trend
+ */
+export interface WeeklyAnalysis {
+  currentWeekAvg: number;
+  previousWeekAvg: number;
+  improvementPercent: number;
+  trend: 'positive' | 'negative' | 'neutral';
+  latestScore: number;
 }

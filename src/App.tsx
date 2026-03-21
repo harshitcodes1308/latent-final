@@ -2,13 +2,19 @@ import 'react-native-gesture-handler'; // Must be at the top!
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
-import { StatusBar } from 'react-native';
+import { StatusBar, Text, TextInput } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 // Note: react-native-screens is shimmed in index.js for iOS New Architecture compatibility
 import { ModelServiceProvider } from './services/ModelService';
 import { AppColors } from './theme';
 import { HomeScreen, LiveSessionScreen, InsightsScreen, SettingsScreen, DisclaimerScreen, OutcomeReplayScreen, PreSessionFormScreen, PreSessionStrategyScreen } from './screens';
 import { RootStackParamList } from './navigation/types';
+
+// Set DM Sans as the global default font for all Text and TextInput components
+const defaultTextProps = (Text as any).defaultProps || {};
+(Text as any).defaultProps = { ...defaultTextProps, style: { fontFamily: 'DMSans-Regular' } };
+const defaultTextInputProps = (TextInput as any).defaultProps || {};
+(TextInput as any).defaultProps = { ...defaultTextInputProps, style: { fontFamily: 'DMSans-Regular' } };
 
 // Using JS-based stack navigator instead of native-stack
 // to avoid react-native-screens setColor crash with New Architecture
@@ -35,6 +41,7 @@ const App: React.FC = () => {
                 fontWeight: '700',
                 fontSize: 18,
                 color: '#2D2D3A',
+                fontFamily: 'DMSans-Regular',
               },
               cardStyle: {
                 backgroundColor: '#FFF8F2',
