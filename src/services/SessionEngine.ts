@@ -17,6 +17,7 @@ import {
 import { SpeechService } from './SpeechService';
 import { NegotiationAnalyzer } from './NegotiationAnalyzer';
 import { LocalStorageService } from './LocalStorageService';
+import { MasteryScoreService } from './MasteryScoreService';
 import { calculateCognitiveMetrics } from '../ai/scoringEngine';
 import { autoCorrectTranscript } from '../ai/WhisperAutoCorrector';
 
@@ -239,6 +240,9 @@ export class SessionEngine {
 
       // Recalculate stats
       await LocalStorageService.calculateStats();
+
+      // Save mastery score entry for weekly trend tracking
+      await MasteryScoreService.saveScore(cognitiveMetrics.focusScore, Date.now());
 
       console.log('[SessionEngine] Session saved:', session.id);
 

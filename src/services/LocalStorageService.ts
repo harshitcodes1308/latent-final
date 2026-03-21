@@ -51,6 +51,9 @@ export class LocalStorageService {
         sessionIds.push(session.id);
         await AsyncStorage.setItem(KEYS.SESSIONS, JSON.stringify(sessionIds));
       }
+      
+      // Invalidate the stats cache so the streak & weekly goals recalculate
+      await AsyncStorage.removeItem(KEYS.STATS);
 
       console.log('[LocalStorage] Session saved:', session.id);
     } catch (error) {
@@ -193,6 +196,8 @@ export class LocalStorageService {
           mostCommonPattern: null,
           totalPatterns: 0,
           lastSessionDate: null,
+          currentStreak: 0,
+          weeklySessionsCount: 0,
         };
       }
 
@@ -225,6 +230,46 @@ export class LocalStorageService {
         }
       });
 
+      // Calculate Streaks
+      const activeDays = new Set(sessions.map(s => {
+        const d = new Date(s.timestamp);
+        d.setHours(0, 0, 0, 0);
+        return d.getTime();
+      }));
+
+      let currentStreak = 0;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      let checkDate = new Date(today.getTime());
+
+      if (activeDays.has(checkDate.getTime())) {
+        currentStreak = 1;
+      } else {
+        // If no session today, check yesterday to see if streak is alive
+        checkDate.setDate(checkDate.getDate() - 1);
+        if (activeDays.has(checkDate.getTime())) {
+          currentStreak = 1;
+        }
+      }
+
+      if (currentStreak > 0) {
+        while (true) {
+          checkDate.setDate(checkDate.getDate() - 1);
+          if (activeDays.has(checkDate.getTime())) {
+            currentStreak++;
+          } else {
+            break;
+          }
+        }
+      }
+
+      // Calculate Weekly Sessions (Calendar week: Sunday to Saturday)
+      const now = new Date();
+      const firstDayOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
+      firstDayOfWeek.setHours(0, 0, 0, 0);
+      const weeklySessionsCount = sessions.filter(s => s.timestamp >= firstDayOfWeek.getTime()).length;
+
       const stats: SessionStats = {
         totalSessions: sessions.length,
         avgFocusScore,
@@ -232,6 +277,8 @@ export class LocalStorageService {
         mostCommonPattern,
         totalPatterns,
         lastSessionDate: sessions[0].timestamp,
+        currentStreak,
+        weeklySessionsCount,
       };
 
       // Cache stats
@@ -247,6 +294,8 @@ export class LocalStorageService {
         mostCommonPattern: null,
         totalPatterns: 0,
         lastSessionDate: null,
+        currentStreak: 0,
+        weeklySessionsCount: 0,
       };
     }
   }
@@ -282,6 +331,11 @@ export class LocalStorageService {
     try {
       await this.deleteAllSessions();
       await AsyncStorage.removeItem(KEYS.STATS);
+
+      // Clear mastery scores
+      const { MasteryScoreService } = require('./MasteryScoreService');
+      await MasteryScoreService.clearScores();
+
       console.log('[LocalStorage] All data cleared');
     } catch (error) {
       console.error('[LocalStorage] Error clearing all data:', error);
